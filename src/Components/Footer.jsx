@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Footer = () => {
   return (
-    <footer id="contact" className="mt-5 py-4 bg-white shadow text-center">
+    <footer id="contact" className="mt-5 py-4  text-center">
       <h4 className="fw-bold text-dark">Stay Connected with QLog</h4>
       <p className="text-secondary px-5">
         Have questions? Need support? Reach out to us anytime. We are here to ensure your authentication experience remains smooth and secure.

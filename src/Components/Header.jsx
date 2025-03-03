@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Header = () => {
   return (
-    <header className="d-flex justify-content-between align-items-center bg-white shadow">
+    <header className="d-flex justify-content-between align-items-center">
       <h1 className="text-primary" >QLog</h1>
       <nav>
         <Link to="/features" className="mx-3 text-dark text-decoration-none">Features</Link>
