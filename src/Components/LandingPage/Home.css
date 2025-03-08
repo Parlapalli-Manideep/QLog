@@ -1,0 +1,34 @@
+.hero {
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: url("https://cloudradius.com/wp-content/uploads/2022/10/3786012.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center; 
+    color: white;
+    padding: 40px;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.hero-image {
+    width: 350px;
+    margin-top: 30px;
+}

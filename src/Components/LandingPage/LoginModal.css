@@ -1,0 +1,8 @@
+.modal {
+    background: rgba(0, 0, 0, 0.6); 
+    backdrop-filter: blur(8px); 
+}
+
+.modal-content {
+    border-radius: 12px;
+}
