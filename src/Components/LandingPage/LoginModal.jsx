@@ -20,7 +20,7 @@ function LoginModal({ show, handleClose }) {
                                      className="rounded-circle mb-2 img-fluid" 
                                      style={{ width: "120px", height: "120px", objectFit: "cover" }} />
                                 <button className="btn btn-primary w-100" onClick={()=>{
-                                    navigate("/Login",{state :{ role:"Manager"}})
+                                    navigate("/Login",{state :{ role:"manager"}})
                                 }}>Manager Login</button>
                             </div>
                             <div className="text-center">
@@ -29,7 +29,7 @@ function LoginModal({ show, handleClose }) {
                                      className="rounded-circle mb-2 img-fluid" 
                                      style={{ width: "120px", height: "120px", objectFit: "cover" }} />
                                 <button className="btn btn-success w-100" onClick={()=>{
-                                    navigate("/Login",{state :{ role:"Employee"}})
+                                    navigate("/Login",{state :{ role:"employee"}})
                                 }}>Employee Login</button>
                             </div>
                         </div>
