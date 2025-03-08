@@ -11,10 +11,24 @@ function HowItWorks({ howItWorksRef }) {
 
         <div className="row g-4">
           <div className="col-md-4 col-sm-6">
-            <div className="card border-0 shadow p-3 h-100">
+            <div
+              className="card border-0 shadow p-3 h-100"
+              style={{
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                borderRadius: "8px",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.2)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 6px 15px rgba(0, 0, 0, 0.1)";
+              }}
+            >
               <div className="mb-3">
-                <img 
-                  src="https://dhiway.com/wp-content/uploads/2021/09/Artboard-2-1.png" 
+                <img
+                  src="https://dhiway.com/wp-content/uploads/2021/09/Artboard-2-1.png"
                   alt="Generate QR Code"
                   className="img-fluid w-100"
                   style={{ height: "180px", objectFit: "contain", borderRadius: "8px" }}
@@ -28,9 +42,23 @@ function HowItWorks({ howItWorksRef }) {
           </div>
 
           <div className="col-md-4 col-sm-6">
-            <div className="card border-0 shadow p-3 h-100">
+            <div
+              className="card border-0 shadow p-3 h-100"
+              style={{
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                borderRadius: "8px",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.2)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 6px 15px rgba(0, 0, 0, 0.1)";
+              }}
+            >
               <div className="mb-3">
-                <img 
+                <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTW0r7hESbpYlu7CgUHRv9RXXvA5vJ-C_9WQ&s"
                   alt="Scan QR Code"
                   className="img-fluid w-100"
@@ -45,10 +73,24 @@ function HowItWorks({ howItWorksRef }) {
           </div>
 
           <div className="col-md-4 col-sm-12">
-            <div className="card border-0 shadow p-3 h-100">
+            <div
+              className="card border-0 shadow p-3 h-100"
+              style={{
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                borderRadius: "8px",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.2)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 6px 15px rgba(0, 0, 0, 0.1)";
+              }}
+            >
               <div className="mb-3">
-                <img 
-                  src="https://t3.ftcdn.net/jpg/12/43/15/30/360_F_1243153029_q1tKivkYWxKL55S2g0ViVFJDDILVsmsh.jpg" 
+                <img
+                  src="https://t3.ftcdn.net/jpg/12/43/15/30/360_F_1243153029_q1tKivkYWxKL55S2g0ViVFJDDILVsmsh.jpg"
                   alt="Access Granted"
                   className="img-fluid w-100"
                   style={{ height: "180px", objectFit: "contain", borderRadius: "8px" }}

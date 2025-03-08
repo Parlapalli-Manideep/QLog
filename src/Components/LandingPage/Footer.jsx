@@ -1,4 +1,5 @@
 import React from "react";
+import { FaFacebookF, FaInstagram, FaThreads, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 
 function Footer({ footerRef }) {
   return (
@@ -21,9 +22,8 @@ function Footer({ footerRef }) {
                 </a>
               </li>
               <li>
-                <i className="fas fa-phone-alt me-2"></i>
                 <a href="tel:+1234567890" className="text-decoration-none" style={{ color: "#B0B0B0" }}>
-                  +91 123 456 7890 
+                  +91 123 456 7890
                 </a>
               </li>
             </ul>
@@ -37,32 +37,32 @@ function Footer({ footerRef }) {
             </ul>
           </div>
 
-          <div className="col-12 col-lg-2 text-center text-lg-end">
-            <h5 className="fw-bold text-white">Follow Us</h5>
-            <ul className="list-unstyled">
+          <div className="col-12 col-lg-2 text-center">
+            <h5 className="fw-bold text-white mb-3">Follow Us</h5>
+            <ul className="list-unstyled d-flex justify-content-center flex-wrap gap-3">
               <li>
                 <a href="https://www.facebook.com" target="_blank" className="text-decoration-none" style={{ color: "#B0B0B0" }}>
-                Facebook
+                  <FaFacebookF size={20} />
                 </a>
               </li>
               <li>
                 <a href="https://www.instagram.com" target="_blank" className="text-decoration-none" style={{ color: "#B0B0B0" }}>
-                Instagram
+                  <FaInstagram size={20} />
                 </a>
               </li>
               <li>
                 <a href="https://www.threads.net" target="_blank" className="text-decoration-none" style={{ color: "#B0B0B0" }}>
-                Threads
+                  <FaThreads size={20} />
                 </a>
               </li>
               <li>
                 <a href="https://www.linkedin.com" target="_blank" className="text-decoration-none" style={{ color: "#B0B0B0" }}>
-                LinkedIn
+                  <FaLinkedinIn size={20} />
                 </a>
               </li>
               <li>
                 <a href="https://www.x.com" target="_blank" className="text-decoration-none" style={{ color: "#B0B0B0" }}>
-                X
+                  <FaXTwitter size={20} />
                 </a>
               </li>
             </ul>

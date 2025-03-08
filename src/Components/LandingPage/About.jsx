@@ -1,40 +1,38 @@
 const About = ({ aboutRef }) => {
-    return (
-      <div className="container py-5" ref={aboutRef}>
-        <div className="row align-items-center">
-          <div className="col-md-6 text-center">
-            <img
-              src="https://scanova.io/blog/wp-content/uploads/2022/06/How-to-scan-a-QR-Code-from-a-screenshot.webp"
-              alt="About QLog"
-              className="img-fluid shadow-lg"
-              style={{ maxWidth: "85%", borderRadius: "15px" }}
-            />
-          </div>
-  
-          <div className="col-md-6">
-            <p className="text-muted">
-              QLog is a QR-based authentication system designed for fast and secure logins. 
-              It eliminates the need for passwords by allowing users to sign in using encrypted QR codes.
-            </p>
-            <ul className="list-unstyled">
-              <li className="d-flex align-items-center">
-                <i className="fas fa-shield-alt text-success me-2"></i> Secure & Password-Free Login
+  return (
+    <div className="container py-5" ref={aboutRef}>
+      <div className="row align-items-center text-center text-md-start">
+        <div className="col-md-6 text-center">
+          <img
+            src="https://scanova.io/blog/wp-content/uploads/2022/06/How-to-scan-a-QR-Code-from-a-screenshot.webp"
+            alt="About QLog"
+            className="img-fluid shadow-lg"
+            style={{ maxWidth: "85%", borderRadius: "15px" }}
+          />
+        </div>
+
+        <div className="col-md-6 mt-4 mt-md-0">
+          <h2 className="fw-bold text-primary">Why Choose QLog?</h2>
+          <p className="text-muted fs-5">
+            Experience a cutting-edge, hassle-free authentication method that prioritizes security and efficiency.
+          </p>
+          <ul className="list-unstyled mt-3">
+            {[  
+              { icon: "fas fa-fingerprint", color: "text-success", text: "Biometric-Like Security with QR Codes" },
+              { icon: "fas fa-mobile-alt", color: "text-primary", text: "No App Required – Scan with Any Device" },
+              { icon: "fas fa-sync-alt", color: "text-warning", text: "Instant Login with Dynamic QR Codes" },
+              { icon: "fas fa-user-shield", color: "text-danger", text: "Access Control & Role-Based Authentication" },
+            ].map((item, index) => (
+              <li key={index} className="d-flex align-items-center gap-3 py-2 px-3 rounded shadow-sm mb-2 bg-light">
+                <i className={`${item.icon} ${item.color} fs-4`}></i>
+                <span className="fw-semibold">{item.text}</span>
               </li>
-              <li className="d-flex align-items-center">
-                <i className="fas fa-qrcode text-primary me-2"></i> Quick Authentication with QR Codes
-              </li>
-              <li className="d-flex align-items-center">
-                <i className="fas fa-clock text-warning me-2"></i> Real-time Session Tracking
-              </li>
-              <li className="d-flex align-items-center">
-                <i className="fas fa-users text-danger me-2"></i> Multi-User & Admin Support
-              </li>
-            </ul>
-          </div>
-        </div>       
+            ))}
+          </ul>
+        </div>
       </div>
-    );
-  };
-  
-  export default About;
-  
+    </div>
+  );
+};
+
+export default About;

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
   getAuth,
@@ -8,7 +9,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { useLocation } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,29 +23,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-
 const BASE_URL = "http://localhost:3000/users";
 
 const AuthPage = () => {
-  const location = useLocation()
-  const role = location.state.role ||{}
-  console.log("Role: ",role)  
+  const navigate = useNavigate();
+  const location = useLocation();
+  const role = location.state?.role || "Employee"; // Default role is Employee
 
   const [isSignup, setIsSignup] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Validation functions
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const isValidPassword = (password) =>
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+  const isValidName = (name) => name.length >= 3;
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (!isValidName(name)) return setMessage("Name must be at least 3 characters long.");
+    if (!isValidEmail(email)) return setMessage("Invalid email format.");
+    if (!isValidPassword(password))
+      return setMessage(
+        "Password must be at least 8 characters, include one uppercase, one lowercase, one number, and one special character."
+      );
+
     try {
       const res = await axios.get(BASE_URL);
       if (res.data.some((user) => user.email === email)) {
         return setMessage("User already exists! Please log in.");
       }
       await createUserWithEmailAndPassword(auth, email, password);
-      const newUser = { id: Date.now(), name, email, method: "email" };
+      const newUser = { id: Date.now(), name, email, method: "email", role };
       await axios.post(BASE_URL, newUser);
       setMessage("Signup Successful! Redirecting to login...");
       setIsSignup(false);
@@ -55,6 +69,9 @@ const AuthPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!isValidEmail(email)) return setMessage("Invalid email format.");
+    if (!isValidPassword(password)) return setMessage("Invalid password format.");
+
     try {
       const res = await axios.get(BASE_URL);
       const user = res.data.find((user) => user.email === email && user.method === "email");
@@ -64,6 +81,7 @@ const AuthPage = () => {
       await signInWithEmailAndPassword(auth, email, password);
       setMessage("Login Successful!");
       localStorage.setItem("user", JSON.stringify(user));
+      navigate(user.role === "Manager" ? "/Manager" : "/Employee"); // Correct navigation
     } catch (error) {
       setMessage(error.message);
     }
@@ -74,11 +92,14 @@ const AuthPage = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       const res = await axios.get(BASE_URL);
-      if (!res.data.some((u) => u.email === user.email)) {
-        await axios.post(BASE_URL, { id: Date.now(), name: user.displayName, email: user.email, method: "google" });
+      let existingUser = res.data.find((u) => u.email === user.email);
+      if (!existingUser) {
+        existingUser = { id: Date.now(), name: user.displayName, email: user.email, method: "google", role };
+        await axios.post(BASE_URL, existingUser);
       }
       setMessage("Google Sign-in Successful!");
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(existingUser));
+      navigate(existingUser.role === "Manager" ? "/Manager" : "/Employee"); // Correct navigation
     } catch (error) {
       setMessage(error.message);
     }
@@ -95,58 +116,36 @@ const AuthPage = () => {
             style={{ objectFit: "cover" }}
           />
         </div>
-
         <div className="col-md-6 p-5 text-center">
           <h2 className="mb-4">{isSignup ? "Sign Up" : "Log In"}</h2>
           <form onSubmit={isSignup ? handleSignup : handleLogin}>
             {isSignup && (
               <div className="mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Full Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
+                <input type="text" className="form-control" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
               </div>
             )}
             <div className="mb-3">
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <input type="email" className="form-control" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
-            <div className="mb-3">
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+            <div className="mb-3 position-relative">
+              <input type={showPassword ? "text" : "password"} className="form-control" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <span className="position-absolute end-0 me-3 mt-2" style={{ cursor: "pointer" }} onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
-            <button type="submit" className="btn btn-primary w-100">
-              {isSignup ? "Sign Up" : "Log In"}
-            </button>
+            <button type="submit" className="btn btn-primary w-100">{isSignup ? "Sign Up" : "Log In"}</button>
           </form>
 
-          <hr className="my-4" />
-          <button className="btn btn-danger w-100" onClick={handleGoogleSignIn}>
-            <i className="bi bi-google me-2"></i> Sign in with Google
-          </button>
+          <button className="btn btn-danger w-100 mt-3" onClick={handleGoogleSignIn}>Login via Google</button>
 
+          {/* Toggle between Login & SignUp */}
           <p className="mt-3">
-            {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
-            <span className="text-primary" style={{ cursor: "pointer" }} onClick={() => setIsSignup(!isSignup)}>
-              {isSignup ? "Log in" : "Sign up"}
-            </span>
+            {isSignup ? "Already have an account? " : "Don't have an account? "}
+            <button className="btn btn-link p-0" onClick={() => setIsSignup(!isSignup)}>
+              {isSignup ? "Login" : "Sign Up"}
+            </button>
           </p>
+
           {message && <p className="text-danger mt-2">{message}</p>}
         </div>
       </div>

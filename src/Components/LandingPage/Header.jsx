@@ -23,7 +23,7 @@ function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, han
                         height="24" 
                     />
 
-                    <button onClick={handleHome} className="navbar-brand">Navbar</button>
+                    <button onClick={handleHome} className="navbar-brand">QLog</button>
 
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
