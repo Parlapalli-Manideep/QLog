@@ -17,23 +17,13 @@ function App() {
         <Route 
           path="/login" 
           element={
-            <AuthLayout 
-              title="Welcome back" 
-              subtitle="Sign in to your account to continue"
-            >
-              <LoginForm />
-            </AuthLayout>
+            <LoginForm />
           } 
         />
         <Route 
           path="/signup" 
           element={
-            <AuthLayout 
-              title="Create an account" 
-              subtitle="Sign up to get started"
-            >
               <SignupForm />
-            </AuthLayout>
           } 
         />
         

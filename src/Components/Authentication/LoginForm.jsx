@@ -8,17 +8,18 @@ import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
-import { checkCredentials,checkUserExists, addUser,checkGoogleCredentials } from '../../Services/users';
+import {checkUserExists, addUser,checkGoogleCredentials, checkCredentials } from '../../Services/users';
+import { AuthLayout } from './AuthenticationLayout';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Get location object
+  const [userMessage, setUserMessage] = useState("");
+  const location = useLocation(); 
   const role = location.state?.role || "";
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(loginSchema),
@@ -28,17 +29,25 @@ export function LoginForm() {
     try {
       setIsLoading(true);
       
-      // Check if user exists in JSON server
-      const userExists = await checkCredentials(data.email,data.password,role);
+      const userExists = await checkUserExists(data.email);
       if (!userExists) {
+        setUserMessage('User not found. Please sign up first')
         toast.error('User not found. Please sign up first.');
+        return;
+      }
+
+      const checkCredentials = await checkCredentials(data.email,data.password,role);
+      if (!checkCredentials) {
+        setUserMessage("Please Check your credentials")
+        toast.error("Please Check your credentials");
         return;
       }
 
       await signInWithEmailAndPassword(auth, data.email, data.password);
       toast.success('Successfully logged in!');
-      navigate(`/${role}`);
+      navigate(`/${role}`,{state :{email : data.email}});
     } catch (error) {
+      setUserMessage("Invalid Credentials")
       toast.error('Invalid credentials');
     } finally {
       setIsLoading(false);
@@ -50,10 +59,8 @@ const handleGoogleLogin = async () => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       
-      // Check if user exists in JSON server
       const userExists = await checkUserExists(result.user.email);
       if (!userExists) {
-        // Add user to JSON server if they don't exist
         const userData = {
           id: Date.now().toString(),
           name: result.user.displayName,
@@ -63,27 +70,30 @@ const handleGoogleLogin = async () => {
         };
         await addUser(userData);
       toast.success('Successfully logged in with Google!');
-        navigate(`/${role}`);
+        navigate(`/${role}`,{state :{email : result.user.email}});
       }
       else{
-          const check = await checkGoogleCredentials(result.user.email,role)
-          if(!check)
-          {
-            alert("wrong credentials")
-            console.log("wrong credentials")
-          }
-          else
-          {
-              toast.success('Successfully logged in with Google!');
-              navigate(`/${role}`);
-          }
-      }
-    } catch (error) {
-      toast.error('Failed to login with Google');
+        const check = await checkGoogleCredentials(result.user.email,role)
+        if(!check)
+        {
+          setUserMessage("wrong credentials")
+        }
+        else
+        {
+            toast.success('Successfully logged in with Google!');
+            navigate(`/${role}`,{state :{email : result.user.email}});
+        }
     }
-  };
+  } catch (error) {
+    toast.error('Failed to login with Google');
+    setUserMessage("Failed to login with Google")
+  }
+};
 
   return (
+    <AuthLayout 
+      title={`Welcome Back, ${role}`} 
+      subtitle="Login into your account to continue" >
     <div>  
       <form onSubmit={handleSubmit(handleLogin)} className="mb-4">
         <div className="mb-3">
@@ -113,12 +123,9 @@ const handleGoogleLogin = async () => {
             <input
               {...register('password')}
               type="password"
-              className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+              className={`form-control`}
               placeholder="Enter your password"
             />
-            {errors.password && (
-              <div className="invalid-feedback">{errors.password.message}</div>
-            )}
           </div>
         </div>
 
@@ -127,14 +134,14 @@ const handleGoogleLogin = async () => {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isLoading}
-          className="btn btn-primary w-100 mb-3"
+          className="btn btn-primary w-100"
         >
           {isLoading ? 'Loading...' : 'Sign in'}
         </motion.button>
       </form>
 
-      <div className="divider">
-        <span>Or continue with</span>
+      <div className="divider text-center">
+        <span>or continue with</span>
       </div>
 
       <motion.button
@@ -144,15 +151,16 @@ const handleGoogleLogin = async () => {
         className="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2"
       >
         <img src="https://www.google.com/favicon.ico" alt="Google" width="20" height="20" />
-        Sign in with Google
+        Google
       </motion.button>
 
       <p className="text-center mt-4 mb-0">
         Don't have an account?{' '}
-        <Link to="/signup" className="text-primary text-decoration-none">
+        <Link to="/signup" state={{ role: role }} className="text-primary text-decoration-none">
           Sign up
         </Link>
       </p>
     </div>
+    </AuthLayout>
   );
 }

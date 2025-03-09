@@ -1,5 +1,11 @@
 {
   "users": [
-
+    {
+      "id": "1741521765553",
+      "name": "MANIDEEP PARLAPALLI",
+      "email": "manideepparlapalli@gmail.com",
+      "role": "manager",
+      "method": "google"
+    }
   ]
 }
