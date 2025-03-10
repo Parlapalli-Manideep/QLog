@@ -13,6 +13,8 @@ import { AuthLayout } from './AuthenticationLayout';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
+  password: z.string().min(0, 'Password must be at least 8 characters long'),
+  
 });
 
 export function LoginForm() {
@@ -36,8 +38,8 @@ export function LoginForm() {
         return;
       }
 
-      const checkCredentials = await checkCredentials(data.email,data.password,role);
-      if (!checkCredentials) {
+      const checkCredential = await checkCredentials(data.email,data.password,role);
+      if (!checkCredential) {
         setUserMessage("Please Check your credentials")
         toast.error("Please Check your credentials");
         return;
@@ -127,6 +129,11 @@ const handleGoogleLogin = async () => {
               placeholder="Enter your password"
             />
           </div>
+          {userMessage && (
+            <div className="alert alert-danger mt-2" role="alert">
+              {userMessage}
+            </div>
+          )}
         </div>
 
         <motion.button
@@ -136,7 +143,7 @@ const handleGoogleLogin = async () => {
           disabled={isLoading}
           className="btn btn-primary w-100"
         >
-          {isLoading ? 'Loading...' : 'Sign in'}
+          {isLoading ? 'Loading...' : 'Login'}
         </motion.button>
       </form>
 

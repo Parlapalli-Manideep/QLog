@@ -24,3 +24,18 @@ export const checkGoogleCredentials = async (email,role) => {
   const users = await getUsers();
   return users.some(user => user.email === email && user.role === role);
 };
+
+export const getUserData = async (email) => {
+  const users = await getUsers();  
+  return users.find(user => user.email === email);
+};
+
+export const updateUser = async (email, updatedFields) => {
+  const users = await getUsers();
+  const user = users.find(user => user.email === email);
+
+  if (!user) return null;
+
+  const response = await axios.patch(`${BASE_URL}/${user.id}`, updatedFields);
+  return response.data;
+};

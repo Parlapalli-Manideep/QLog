@@ -1,11 +1,56 @@
 {
   "users": [
     {
-      "id": "1741521765553",
+      "id": "1741527563486",
+      "name": "manideeep",
+      "email": "manideep1@gmail.com",
+      "password": "Mani@123",
+      "role": "manager",
+      "method": "email"
+    },
+    {
+      "id": "1741629965150",
       "name": "MANIDEEP PARLAPALLI",
       "email": "manideepparlapalli@gmail.com",
-      "role": "manager",
-      "method": "google"
+      "role": "employee",
+      "method": "google",
+      "managerId": "11",
+      "qrCode": "manideepparlapalli@gmail.com-11",
+      "loginSessions": [
+        {"loginTime": "1736929800", "logoutTime": "1736958600"},
+        {"loginTime": "1737008340", "logoutTime": "1737040740"},
+        {"loginTime": "1737096780", "logoutTime": "1737129180"},
+        {"loginTime": "1737196920", "logoutTime": "1737229320"},
+        {"loginTime": "1737281160", "logoutTime": "1737313560"},
+        {"loginTime": "1737364620", "logoutTime": "1737389820"},
+        {"loginTime": "1737440220", "logoutTime": "1737465420"},
+        {"loginTime": "1737538920", "logoutTime": "1737564120"},
+        {"loginTime": "1737621240", "logoutTime": "1737646440"},
+        {"loginTime": "1737715080", "logoutTime": "1737747480"},
+        {"loginTime": "1737797220", "logoutTime": "1737826020"},
+        {"loginTime": "1737878340", "logoutTime": "1737907140"},
+        {"loginTime": "1737962700", "logoutTime": "1737987900"},
+        {"loginTime": "1738059120", "logoutTime": "1738091520"},
+        {"loginTime": "1738131900", "logoutTime": "1738160700"},
+        {"loginTime": "1738221060", "logoutTime": "1738249860"},
+        {"loginTime": "1738314840", "logoutTime": "1738343640"},
+        {"loginTime": "1738390440", "logoutTime": "1738415640"},
+        {"loginTime": "1738489380", "logoutTime": "1738518180"},
+        {"loginTime": "1738578240", "logoutTime": "1738610640"},
+        {"loginTime": "1738661640", "logoutTime": "1738690440"},
+        {"loginTime": "1738752060", "logoutTime": "1738784460"},
+        {"loginTime": "1738827360", "logoutTime": "1738852560"},
+        {"loginTime": "1738910460", "logoutTime": "1738939260"},
+        {"loginTime": "1738999980", "logoutTime": "1739032380"},
+        {"loginTime": "1739094600", "logoutTime": "1739119800"},
+        {"loginTime": "1739167440", "logoutTime": "1739196240"},
+        {"loginTime": "1739263260", "logoutTime": "1739288460"},
+        {"loginTime": "1739344620", "logoutTime": "1739373420"},
+        {"loginTime": "1739440800", "logoutTime": "1739469600"},
+        {"loginTime": "1739518680", "logoutTime": "1739547480"},
+        {"loginTime": "1739610300", "logoutTime": "1739642700"}
+      ]
+      
     }
   ]
 }

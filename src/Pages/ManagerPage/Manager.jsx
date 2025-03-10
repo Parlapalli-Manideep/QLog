@@ -7,6 +7,7 @@ function Manager(){
         <>
             <h1>this is manager page</h1>
             <h1>email:{userEmail}</h1>
+            
         </>
     )
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Header.css";
-import LoginModal from "./LoginModal";
+import LoginModal from "../Modals/LoginModal";
 
 function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, handleFaqSection, handleFooter }) {
     const [showModal, setShowModal] = useState(false);
