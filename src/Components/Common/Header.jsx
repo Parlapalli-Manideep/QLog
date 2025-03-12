@@ -1,22 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Modal, Button } from "react-bootstrap";
 import { FaBug, FaSignOutAlt, FaUserCog } from "react-icons/fa";
+import ModalComponent from "../Modals/ModalComponent";
 
-const EmployeeHeader = ({ userData, onShowQR }) => {
+const Header = ({ name, id, role }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const dropdownRef = useRef(null);
-    const logoutModalRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setShowDropdown(false);
-            }
-            if (logoutModalRef.current && !logoutModalRef.current.contains(event.target)) {
-                setShowLogoutConfirm(false);
             }
         }
 
@@ -26,15 +22,15 @@ const EmployeeHeader = ({ userData, onShowQR }) => {
 
     const handleLogout = () => {
         setShowLogoutConfirm(false);
-        navigate("/Login", { state: { role: "employee" } });
+        navigate("/Login", { state: { role } });
     };
 
     return (
         <>
             <header className="d-flex justify-content-between align-items-center px-4 py-2 bg-light shadow-sm fixed-top">
-                <div onClick={onShowQR} style={{ cursor: "pointer" }}>
-                    <h5 className="mb-0 fw-bold">{userData?.name || "Employee"}</h5>
-                    <small className="text-muted">Manager ID: {userData?.managerId || "N/A"}</small>
+                <div>
+                    <h5 className="mb-0 fw-bold">{name || role }</h5>
+                    <small className="text-muted">Manager ID: {id || "N/A"}</small>
                 </div>
 
                 <div className="position-relative" ref={dropdownRef}>
@@ -52,7 +48,7 @@ const EmployeeHeader = ({ userData, onShowQR }) => {
                             >
                                 <FaBug className="me-2" /> Report Bug
                             </div>
-                            <hr className="my-1" /> {/* Separator line */}
+                            <hr className="my-1" />
                             <div 
                                 className="p-2 d-flex align-items-center text-danger" 
                                 onClick={() => setShowLogoutConfirm(true)}
@@ -65,22 +61,15 @@ const EmployeeHeader = ({ userData, onShowQR }) => {
                 </div>
             </header>
 
-            <Modal show={showLogoutConfirm} centered backdrop="static" keyboard={false}>
-                <div ref={logoutModalRef}>
-                    <Modal.Header>
-                        <Modal.Title>Confirm Logout</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>Are you sure you want to logout?</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowLogoutConfirm(false)}>Cancel</Button>
-                        <Button variant="danger" onClick={handleLogout}>Logout</Button>
-                    </Modal.Footer>
-                </div>
-            </Modal>
+            <ModalComponent 
+                title="Confirm Logout"
+                message="Are you sure you want to logout?"
+                show={showLogoutConfirm}
+                onClose={() => setShowLogoutConfirm(false)}
+                onConfirm={handleLogout}
+            />
         </>
     );
 };
 
-export default EmployeeHeader;
+export default Header;

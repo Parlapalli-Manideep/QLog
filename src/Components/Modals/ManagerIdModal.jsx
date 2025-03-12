@@ -1,45 +1,64 @@
 import React, { useState } from "react";
+import { Modal, Button, Form, Image } from "react-bootstrap";
+import { checkManagerIdExists, updateUser } from "../../Services/Users"; 
 
-const ManagerIdModal = ({ onSubmit }) => {
+const ManagerIdModal = ({ employee, show, onClose, onUpdate }) => {
     const [managerId, setManagerId] = useState("");
+    const [error, setError] = useState("");
 
-    const handleSubmit = () => {
-        if (!managerId.trim()) return; 
-        onSubmit(managerId);
+    const handleSave = async () => {
+        if (!managerId.trim()) {
+            setError("Manager ID is required.");
+            return;
+        }
+
+        const managerExists = await checkManagerIdExists(managerId,employee.id);
+        if (!managerExists) {
+            setError("Enter a valid Manager ID.");
+            return;
+        }
+
+        const updatedEmployee = {
+            ...employee,
+            managerId,
+            LoginSessions: [],
+        };
+
+        await updateUser(employee.email, "employee", updatedEmployee);
+
+        
+        onUpdate(updatedEmployee);
+        onClose();
     };
 
     return (
-        <div className="modal show d-block" tabIndex="-1" role="dialog">
-            <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content p-4">
-                    <div className="modal-header border-0">
-                        <h5 className="modal-title text-center w-100">Enter Manager ID</h5>
-                    </div>
+        <Modal show={show} centered backdrop="static" keyboard={false}>
+            <Modal.Body className="text-center">
+                <Image
+                    src="https://as2.ftcdn.net/jpg/02/09/79/01/1000_F_209790157_lni2Rip3Dm1YrTNPW6jCuSI6sIADbrKD.jpg"
+                    alt="Manager Avatar"
+                    className="mb-3"
+                    roundedCircle
+                    width={100}
+                    height={100}
+                />
 
-                    <div className="modal-body text-center">
-                        <img 
-                            src="https://static.vecteezy.com/system/resources/previews/005/950/870/non_2x/punctual-employee-icon-design-of-avatar-with-clock-vector.jpg"
-                            alt="Manager Icon"
-                            className="mb-3 rounded-circle"
-                            style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                        />
-                        <input
-                            type="text"
-                            value={managerId}
-                            onChange={(e) => setManagerId(e.target.value)}
-                            className="form-control mb-3"
-                            placeholder="Enter Manager ID"
-                        />
-                        <button 
-                            onClick={handleSubmit} 
-                            className="btn btn-primary w-100"
-                        >
-                            Submit
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <h4 className="mb-3">Enter Your Manager ID</h4>
+
+                <Form.Group>
+                    <Form.Control
+                        type="text"
+                        value={managerId}
+                        onChange={(e) => setManagerId(e.target.value)}
+                        isInvalid={!!error}
+                    />
+                    <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+                </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="primary" onClick={handleSave}>Submit</Button>
+            </Modal.Footer>
+        </Modal>
     );
 };
 

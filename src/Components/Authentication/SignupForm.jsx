@@ -9,7 +9,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
 import { PasswordStrength } from './PasswordStrength';
-import { addUser, checkUserExists,checkGoogleCredentials } from '../../Services/users';
+import { addUser, checkUserExists,checkGoogleCredentials } from '../../Services/Users';
 import { AuthLayout } from './AuthenticationLayout';
 
 const signupSchema = z.object({
@@ -54,10 +54,11 @@ export function SignupForm() {
         role:  role,
         method: 'email'
       };
+      role == "manager" ? userData.staff = [] : ""
 
       await addUser(userData);
       toast.success('Account created successfully!');
-      navigate('/login');
+      navigate('/login',{state :{ role:userData.role}});
 
     } catch (error) {
       toast.error('Failed to create account');
@@ -81,9 +82,10 @@ const handleGoogleSignup = async () => {
         role:role,
         method: 'google'
       };
+      role == "manager" ? userData.staff = [] : ""
       await addUser(userData);
     toast.success('Successfully logged in with Google!');
-      navigate(`/${role}`,{state :{email : result.user.email}});
+      navigate(`/${role}`,{state :{email : result.user.email, role:role}});
     }
     else{
         const check = await checkGoogleCredentials(result.user.email,role)
@@ -94,7 +96,7 @@ const handleGoogleSignup = async () => {
         else
         {
             toast.success('Successfully logged in with Google!');
-            navigate(`/${role}`,{state :{email : result.user.email}});
+            navigate(`/${role}`,{state :{email : result.user.email,role:role}});
         }
     }
   } catch (error) {

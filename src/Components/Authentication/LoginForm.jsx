@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
-import {checkUserExists, addUser,checkGoogleCredentials, checkCredentials } from '../../Services/users';
+import {checkUserExists, addUser,checkGoogleCredentials, checkCredentials } from '../../Services/Users'
 import { AuthLayout } from './AuthenticationLayout';
 
 const loginSchema = z.object({
@@ -47,7 +47,7 @@ export function LoginForm() {
 
       await signInWithEmailAndPassword(auth, data.email, data.password);
       toast.success('Successfully logged in!');
-      navigate(`/${role}`,{state :{email : data.email}});
+      navigate(`/${role}`,{state :{email : data.email,role:role}});
     } catch (error) {
       setUserMessage("Invalid Credentials")
       toast.error('Invalid credentials');
@@ -60,7 +60,6 @@ const handleGoogleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      
       const userExists = await checkUserExists(result.user.email);
       if (!userExists) {
         const userData = {
@@ -70,9 +69,10 @@ const handleGoogleLogin = async () => {
           role:role,
           method: 'google'
         };
-        await addUser(userData);
+      role == "manager" ? userData.staff = [] : ""
+      await addUser(userData);
       toast.success('Successfully logged in with Google!');
-        navigate(`/${role}`,{state :{email : result.user.email}});
+      navigate(`/${role}`,{state :{email : result.user.email,role:userData.role}});
       }
       else{
         const check = await checkGoogleCredentials(result.user.email,role)
@@ -83,7 +83,7 @@ const handleGoogleLogin = async () => {
         else
         {
             toast.success('Successfully logged in with Google!');
-            navigate(`/${role}`,{state :{email : result.user.email}});
+            navigate(`/${role}`,{state :{email : result.user.email,role:role}});
         }
     }
   } catch (error) {
