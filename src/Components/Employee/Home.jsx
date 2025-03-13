@@ -1,141 +1,166 @@
-import React, { useState } from "react";
-import { Card, Row, Col, Form } from "react-bootstrap";
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from "recharts";
+import React, { useState, useEffect } from "react";
+import { Card, Button, Alert } from "react-bootstrap";
+import { Mail, Shield, Clock, User, Calendar, AlertCircle } from "lucide-react";
+import ModalComponent from "../Modals/ModalComponent";
+import { getEmployeeLeaves } from "../../Services/Users";
+import ApplyLeave from "./ApplyLeave";
 
-const COLORS = ["#4CAF50", "#FF9800", "#F44336"]; 
+const Home = ({ employee, manager }) => {
+    const [showModal, setShowModal] = useState(false);
+    const [showCalendar, setShowCalendar] = useState(false);
+    const [existingLeaves, setExistingLeaves] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
-const Home = ({ userData }) => {
-    if (!userData?.loginSessions || userData.loginSessions.length === 0) {
-        return <p className="text-center mt-4">No attendance records found.</p>;
-    }
+    const today = React.useMemo(() => new Date(), []);
+    const currentYear = today.getFullYear().toString();
+    
+    const loginSessions = employee?.LoginSessions || [];    
+    const lastSession = loginSessions.length > 0 ? loginSessions[loginSessions.length - 1] : null;
+    const isActive = lastSession && !lastSession.logoutTime;    
 
-    const lastSession = userData.loginSessions[userData.loginSessions.length - 1];
-    const lastLogin = parseTimestamp(lastSession?.loginTime);
-    const lastLogout = parseTimestamp(lastSession?.logoutTime);
+    const employeeDetails = [
+        { label: "Employee ID", value: employee.id, icon: <User size={24} className="text-primary me-2" /> },
+        { label: "Email", value: employee.email, icon: <Mail size={24} className="text-success me-2" /> },
+        { label: "Role", value: employee.role, icon: <Shield size={24} className="text-purple me-2" /> },
+        {
+            label: "Status",
+            value: isActive ? "Active" : "Inactive",
+            icon: <Clock size={24} className="text-warning me-2" />,
+            textColor: isActive ? "text-success" : "text-danger",
+        },
+    ];
 
-    const isToday = lastLogin && new Date().toDateString() === lastLogin.toDateString();
-    const isActive = isToday && !lastLogout;
+    useEffect(() => {
+        const fetchLeaves = async () => {
+            if (employee?.id) {
+                setIsLoading(true);
+                try {
+                    const leavesData = await getEmployeeLeaves(employee.id);
+                    const todayDate = today.toISOString().split('T')[0]; // Get today's date as YYYY-MM-DD string
+                    const filteredLeaves = (leavesData[currentYear] || []).filter(
+                        date => date >= todayDate
+                    );
+                    setExistingLeaves(filteredLeaves); 
+                } catch (error) {
+                    console.error("Error fetching leaves:", error);
+                    setErrorMessage("Failed to load existing leave data.");
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+    
+        fetchLeaves();
+    }, [employee?.id, currentYear, today]); 
 
-    const [selectedRange, setSelectedRange] = useState("1m"); 
+    const handleLeaveApplied = (updatedLeaves, selectedDates) => {
+        setSuccessMessage("Leave successfully applied for: " + selectedDates.join(", "));
+        setExistingLeaves(updatedLeaves);
+        setShowCalendar(false);
+        
+        setTimeout(() => setSuccessMessage(""), 3000);
+    };
 
-    // Get Date Range for Filtering
-    const now = new Date();
-    let startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Default: This Month
-
-    if (selectedRange === "3m") startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-    else if (selectedRange === "6m") startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-    else if (selectedRange === "1y") startDate = new Date(now.getFullYear() - 1, 0, 1);
-
-    const filteredSessions = filterByDateRange(userData.loginSessions, startDate, now);
-
-    let normalSessions = 0, otSessions = 0, earlyLogoutSessions = 0;
-    filteredSessions.forEach((session) => {
-        const loginTime = parseTimestamp(session.loginTime);
-        const logoutTime = parseTimestamp(session.logoutTime);
-        if (!loginTime || !logoutTime) return; 
-        const { totalMinutes } = calculateDuration(loginTime, logoutTime);
-        const { status } = getSessionStatus(totalMinutes);
-
-        if (status === "Normal") normalSessions++;
-        else if (status === "OT") otSessions++;
-        else if (status === "Early Logout") earlyLogoutSessions++;
-    });
-
-    const pieData = [
-        { name: "Normal", value: normalSessions },
-        { name: "OT", value: otSessions },
-        { name: "Early Logout", value: earlyLogoutSessions }
-    ].filter((item) => item.value > 0); 
+    const handleCancel = () => {
+        setShowCalendar(false);
+    };
 
     return (
-        <div className="container mt-4">
-            <Row className="g-3">
-                <Col md={4}>
-                    <Card className="p-3 shadow-sm text-center custom-box">
-                        <h6 className="fw-bold">Last Login</h6>
-                        <p className="mb-0">{lastLogin ? lastLogin.toLocaleTimeString() : "No data"}</p>
-                    </Card>
-                </Col>
-                <Col md={4}>
-                    <Card className="p-3 shadow-sm text-center custom-box">
-                        <h6 className="fw-bold">Last Logout</h6>
-                        <p className="mb-0">{lastLogout ? lastLogout.toLocaleTimeString() : "Active"}</p>
-                    </Card>
-                </Col>
-                <Col md={4}>
-                    <Card className={`p-3 shadow-sm text-center custom-box ${isActive ? "bg-success text-white" : "bg-light"}`}>
-                        <h6 className="fw-bold">Status</h6>
-                        <p className="mb-0 fw-bold">{isActive ? "Active" : "Inactive"}</p>
-                    </Card>
-                </Col>
-            </Row>
+        <div style={{ margin: "85px auto auto 75px" }}>
+            {successMessage && (
+                <Alert variant="success" className="mb-4" onClose={() => setSuccessMessage("")} dismissible>
+                    {successMessage}
+                </Alert>
+            )}
 
-            <Row className="mt-4">
-                <Col md={6} className="d-flex">
-                    <Card className="p-3 shadow-sm w-100 h-100">
-                        <div className="d-flex justify-content-between align-items-center">
-                            <h5 className="mb-0">Session Summary</h5>
-                            <Form.Select 
-                                value={selectedRange} 
-                                onChange={(e) => setSelectedRange(e.target.value)}
-                                className="w-auto"
-                            >
-                                <option value="1m">This Month</option>
-                                <option value="3m">Last 3 Months</option>
-                                <option value="6m">Last 6 Months</option>
-                                <option value="1y">Last 1 Year</option>
-                            </Form.Select>
+            {errorMessage && (
+                <Alert variant="danger" className="mb-4" onClose={() => setErrorMessage("")} dismissible>
+                    {errorMessage}
+                </Alert>
+            )}
+
+            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
+                <h5 className="fw-semibold mb-3 fw-bold text-primary">Employee Information</h5>
+                <div className="d-flex flex-wrap justify-content-center gap-3">
+                    {employeeDetails.map((detail, index) => (
+                        <div className="d-flex" style={{ flex: "1 1 250px", maxWidth: "300px" }} key={index}>
+                            <Card className="p-3 shadow-sm bg-light w-100">
+                                <div className="d-flex align-items-center">
+                                    {detail.icon}
+                                    <div className="ms-2 flex-grow-1 text-wrap">
+                                        <p className="mb-1 fw-semibold">{detail.label}</p>
+                                        <p className={`fw-bold ${detail.textColor || ""}`}>{detail.value}</p>
+                                    </div>
+                                </div>
+                            </Card>
                         </div>
-                        {pieData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={250}>
-                                <PieChart>
-                                    <Pie
-                                        data={pieData}
-                                        cx="50%"
-                                        cy="50%"
-                                        labelLine={false}
-                                        outerRadius={80}
-                                        fill="#8884d8"
-                                        dataKey="value"
-                                    >
-                                        {pieData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                    <Legend />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <p className="text-center text-muted mt-3">No data available</p>
-                        )}
-                    </Card>
-                </Col>
+                    ))}
+                </div>
+            </div>
 
-                <Col md={6} className="d-flex">
-                    <Card className="p-3 shadow-sm w-100 h-100">
-                        <h5 className="text-center">Performance Overview</h5>
-                        <ul className="list-group list-group-flush">
-                            <li className="list-group-item d-flex justify-content-between">
-                                <span>Total Sessions</span>
-                                <strong>{normalSessions + otSessions + earlyLogoutSessions}</strong>
-                            </li>
-                            <li className="list-group-item d-flex justify-content-between">
-                                <span>Normal Sessions</span>
-                                <strong>{normalSessions}</strong>
-                            </li>
-                            <li className="list-group-item d-flex justify-content-between">
-                                <span>Overtime (OT) Sessions</span>
-                                <strong>{otSessions}</strong>
-                            </li>
-                            <li className="list-group-item d-flex justify-content-between">
-                                <span>Early Logout Sessions</span>
-                                <strong>{earlyLogoutSessions}</strong>
-                            </li>
-                        </ul>
-                    </Card>
-                </Col>
-            </Row>
+            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
+                <h5 className="fw-semibold mb-3 fw-bold text-success">Quick Information</h5>
+                <div className="d-flex flex-wrap gap-3">
+                    <div className="p-3 shadow-sm rounded bg-light flex-grow-1">
+                        <p className="text-muted mb-1">Manager Name</p>
+                        <p className="fw-bold">{manager?.name || "N/A"}</p>
+                    </div>
+
+                    <div className="p-3 shadow-sm rounded bg-light flex-grow-1">
+                        <p className="text-muted mb-1">Contact</p>
+                        <p className="fw-bold">{manager?.email || "N/A"}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
+                <div className="d-flex align-items-center mb-3">
+                    <Calendar className="me-2 text-primary" size={24} />
+                    <h5 className="fw-semibold mb-0 fw-bold text-primary">Leave Management</h5>
+                </div>
+
+                <div className="p-3 shadow-sm rounded bg-light">
+                    <div className="text-center">
+                        {!showCalendar ? (
+                            <Button
+                                variant="primary"
+                                onClick={() => setShowCalendar(true)}
+                                disabled={isLoading}
+                                className="px-4"
+                            >
+                                Apply for Leave
+                            </Button>
+                        ) : (
+                            <ApplyLeave 
+                                employee={employee}
+                                onLeaveApplied={handleLeaveApplied}
+                                onCancel={handleCancel}
+                            />
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {existingLeaves.length > 0 && (
+                <div className="p-4 shadow-sm rounded bg-white w-100">
+                    <h5 className="fw-semibold mb-3 fw-bold text-primary">Upcoming Leave Days</h5>
+                    <div className="d-flex flex-wrap">
+                        {existingLeaves
+                            .sort((a, b) => new Date(a) - new Date(b))
+                            .map(date => (
+                                <span key={date} className="badge bg-primary me-2 mb-2 p-2">
+                                    {new Date(date).toLocaleDateString('en-US', {
+                                        weekday: 'short',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    })}
+                                </span>
+                            ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

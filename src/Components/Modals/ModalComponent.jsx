@@ -12,7 +12,7 @@ const ModalComponent = ({ title, message, show, onClose, onConfirm }) => {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onClose}>Cancel</Button>
-                <Button variant="danger" onClick={onConfirm}>Logout</Button>
+                <Button variant="success" onClick={onConfirm}>Continue</Button>
             </Modal.Footer>
         </Modal>
     );

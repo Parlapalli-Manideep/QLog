@@ -1,44 +1,71 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { getUserByEmail } from "../../Services/Users";
-import Header from "../../Components/Common/Header"; 
-import ManagerIdModal from "../../Components/Modals/ManagerIdModal"
-const Employee = () =>{
+import { getUserByEmail, getUserById } from "../../Services/Users";
+import Header from "../../Components/Common/Header";
+import ManagerIdModal from "../../Components/Modals/ManagerIdModal";
+import Attendance from "../../Components/Employee/Attendance";
+import SideBar from "../../Components/Common/Sidebar";
+import Home from "../../Components/Employee/Home"; 
+import Stats from "../../Components/Employee/Stats";
+
+const Employee = () => {
     const location = useLocation();
-    const employeeEmail = location.state?.email || email;
-    const employeeRole = location.state?.role || role;
-    
+    const employeeEmail = location.state?.email;
+    const employeeRole = location.state?.role;
+
     const [employee, setEmployee] = useState(null);
     const [manager, setManager] = useState(null);
     const [showManagerModal, setShowManagerModal] = useState(false);
+    const [activeComponent, setActiveComponent] = useState("home");
+    const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
     useEffect(() => {
         const fetchEmployee = async () => {
-            const user = await getUserByEmail(employeeEmail, employeeRole);
-            setEmployee(user);
-            if (!user.managerId) {
+            if (!employeeEmail || !employeeRole) return;
+            
+            const employeeUser = await getUserByEmail(employeeEmail, employeeRole);
+            setEmployee(employeeUser);
+
+            if (!employeeUser.managerId) {
                 setShowManagerModal(true);
+                return;
             }
-            const userManager = await getUserById(employee.managerId, manager);
-            setEmployee(userManager);
+
+            const managerUser = await getUserById(employeeUser.managerId, "manager");
+            setManager(managerUser);
         };
 
         fetchEmployee();
-    }, [employeeEmail, employeeRole]);
+    }, [employeeEmail, employeeRole]); // Only run when email or role changes
 
     return (
-        <>
-            {employee && <Header name={employee.name} id={employee.managerId} role={employee.role} />}
+        <div className="d-flex">
+            <SideBar
+                isSidebarExpanded={isSidebarExpanded}
+                setIsSidebarExpanded={setIsSidebarExpanded}
+                setActiveComponent={setActiveComponent}
+            />
 
-            {employee && (
-                <ManagerIdModal
-                    employee={employee}
-                    show={showManagerModal}
-                    onClose={() => setShowManagerModal(false)}
-                    onUpdate={(updatedEmployee) => setEmployee(updatedEmployee)}
-                />
-            )}
-        </>
+            {/* Main Content */}
+            <div className="ms-auto" style={{ marginLeft: isSidebarExpanded ? "200px" : "70px", transition: "0.3s", width: "100%" }}>
+                {employee && (
+                    <ManagerIdModal
+                        employee={employee}
+                        show={showManagerModal}
+                        onClose={() => setShowManagerModal(false)}
+                        onUpdate={(updatedEmployee) => setEmployee(updatedEmployee)}
+                    />
+                )}
+                {employee && <Header name={employee.name} id={employee.managerId} role={employee.role} />}
+
+                <div className="container mt-5">
+                    {manager && activeComponent === "home" && <Home employee={employee} manager={manager} />}
+                    {activeComponent === "attendance" && <Attendance loginSessions={employee.LoginSessions}/>}
+                    {activeComponent === "Stats" && <Stats loginSessions={employee.LoginSessions} leaves = {employee.Leaves}/>}
+                    {activeComponent === "settings" && <h1>Settings</h1>}
+                </div>
+            </div>
+        </div>
     );
 };
 
