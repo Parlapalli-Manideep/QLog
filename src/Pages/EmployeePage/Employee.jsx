@@ -7,6 +7,7 @@ import Attendance from "../../Components/Employee/Attendance";
 import SideBar from "../../Components/Common/Sidebar";
 import Home from "../../Components/Employee/Home"; 
 import Stats from "../../Components/Employee/Stats";
+import QRCodeComponent from "../../Components/Employee/QRCodeComponent";
 
 const Employee = () => {
     const location = useLocation();
@@ -36,7 +37,7 @@ const Employee = () => {
         };
 
         fetchEmployee();
-    }, [employeeEmail, employeeRole]); // Only run when email or role changes
+    }, [employeeEmail, employeeRole]); 
 
     return (
         <div className="d-flex">
@@ -46,7 +47,6 @@ const Employee = () => {
                 setActiveComponent={setActiveComponent}
             />
 
-            {/* Main Content */}
             <div className="ms-auto" style={{ marginLeft: isSidebarExpanded ? "200px" : "70px", transition: "0.3s", width: "100%" }}>
                 {employee && (
                     <ManagerIdModal
@@ -61,7 +61,8 @@ const Employee = () => {
                 <div className="container mt-5">
                     {manager && activeComponent === "home" && <Home employee={employee} manager={manager} />}
                     {activeComponent === "attendance" && <Attendance loginSessions={employee.LoginSessions}/>}
-                    {activeComponent === "Stats" && <Stats loginSessions={employee.LoginSessions} leaves = {employee.Leaves}/>}
+                    {activeComponent === "stats" && <Stats loginSessions={employee.LoginSessions} leaves = {employee.Leaves}/>}
+                    {activeComponent === "qrcode" && <QRCodeComponent employee={employee}/>}
                     {activeComponent === "settings" && <h1>Settings</h1>}
                 </div>
             </div>

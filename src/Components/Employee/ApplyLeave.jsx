@@ -10,6 +10,7 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
     const [existingLeaves, setExistingLeaves] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     const today = new Date();
     const minDate = new Date(today);
@@ -38,7 +39,7 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
     }, [employee?.id]);
 
     const toggleDateSelection = (date) => {
-        const formattedDate = date.toLocaleDateString("en-CA"); // "YYYY-MM-DD" format in local timezone
+        const formattedDate = date.toLocaleDateString("en-CA"); 
 
         if (existingLeaves.includes(formattedDate)) {
             setErrorMessage("This date already has an approved leave.");
@@ -99,6 +100,8 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
             });
     
             if (updatedUser) {
+                setSuccessMessage("Leave applied successfully!");
+                setTimeout(() => setSuccessMessage(""), 3000);
                 onLeaveApplied(updatedYearLeaves, selectedDates);
             } else {
                 setErrorMessage("Failed to update leave information. Please try again.");
@@ -119,6 +122,12 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
                 </Alert>
             )}
             
+            {successMessage && (
+                <Alert variant="success" onClose={() => setSuccessMessage("")} dismissible>
+                    {successMessage}
+                </Alert>
+            )}
+            
             <p className="text-muted mb-2">
                 <small>
                     <AlertCircle size={16} className="me-1" />
@@ -134,7 +143,7 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
                 maxDate={maxDate}
                 highlightDates={selectedDates.map(date => new Date(date))}
                 filterDate={date => {
-                    // Disable only weekends and dates that are already in existing leaves
+                   
                     const formattedDate = date.toLocaleDateString("en-CA");
                     const day = date.getDay();
                     return day !== 0 && day !== 6 && !existingLeaves.includes(formattedDate);

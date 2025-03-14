@@ -2,7 +2,10 @@ import React, { useState, useMemo } from "react";
 import { Table, Pagination, Button, Dropdown } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { calculateWorkingHours, classifySession, filterSessions } from "../../Utils/AttendanceCalculations";
+import { calculateWorkingHours, classifySession, filterSessions, formatDate, formatTime } from "../../Utils/AttendanceCalculations";
+import DownloadTablePDF from "../Common/DownloadPdf";
+import ModalComponent from "../Modals/ModalComponent";
+import { Download } from "lucide-react";
 
 const Attendance = ({ loginSessions }) => {
     const [startDate, setStartDate] = useState(null);
@@ -10,26 +13,24 @@ const Attendance = ({ loginSessions }) => {
     const [sessionType, setSessionType] = useState("All Sessions");
     const [currentPage, setCurrentPage] = useState(1);
     const [filterDates, setFilterDates] = useState({ startDate: null, endDate: null });
+    const [showModal, setShowModal] = useState(false);
 
+    const headers = ['Date', 'Login Time', 'Logout Time', 'Working Hours', 'Status']
     const applyDateFilter = () => {
         setFilterDates({ startDate, endDate });
     };
-    
+
     const filteredSessions = useMemo(() => {
+        setCurrentPage(1);
         return filterSessions(loginSessions, filterDates.startDate, filterDates.endDate, sessionType).reverse();
-    }, [loginSessions, filterDates.startDate, filterDates.endDate, sessionType]);
-    
+    }, [loginSessions, filterDates, sessionType]);
+
+
+
     const totalPages = Math.ceil(filteredSessions.length / 10);
     const displayedSessions = filteredSessions.slice((currentPage - 1) * 10, currentPage * 10);
 
-    const formatDate = (date) => {
-        const d = new Date(date);
-        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-    };
 
-    const formatTime = (date) => {
-        return new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
-    };
 
     const getStatusStyle = (status) => {
         switch (status) {
@@ -45,11 +46,14 @@ const Attendance = ({ loginSessions }) => {
     return (
         <div style={{ marginTop: "85px" }} className="p-4 bg-white shadow-sm rounded">
 
-            <div className=" mb-3">
-                <h4 className="mb-0 px-3 py-2"
-                    style={{ backgroundColor: "#f0f0f0", borderRadius: "5px" }}>
+            <div className=" mb-3 d-flex justify-content-between py-1 px-2" style={{ backgroundColor: "#f0f0f0", borderRadius: "5px" }}>
+                <h4 className="mb-0 fw-bold">
                     Employee Attendance Records
                 </h4>
+                <Button variant="link" onClick={() => setShowModal(true)}>
+                    <Download size={24} color="black" />
+                </Button>
+
             </div>
 
 
@@ -84,7 +88,7 @@ const Attendance = ({ loginSessions }) => {
             </div>
 
             {/* Table */}
-            <Table bordered striped hover className="text-center">
+            <Table bordered striped hover className="text-center" id="AttendenceData">
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -111,41 +115,54 @@ const Attendance = ({ loginSessions }) => {
             </Table>
 
             {totalPages > 1 && (
-    <Pagination className="justify-content-center">
-        <Pagination.Prev
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-        />
+                <Pagination className="justify-content-center">
+                    <Pagination.Prev
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                    />
 
-        {(() => {
-            let pageNumbers = [];
-            if (totalPages <= 3) {
-                pageNumbers = [...Array(totalPages)].map((_, idx) => idx + 1);
-            } else if (currentPage === 1) {
-                pageNumbers = [1, 2, 3];
-            } else if (currentPage === totalPages) {
-                pageNumbers = [totalPages - 2, totalPages - 1, totalPages];
-            } else {
-                pageNumbers = [currentPage - 1, currentPage, currentPage + 1];
-            }
+                    {(() => {
+                        let pageNumbers = [];
+                        if (totalPages <= 3) {
+                            pageNumbers = [...Array(totalPages)].map((_, idx) => idx + 1);
+                        } else if (currentPage === 1) {
+                            pageNumbers = [1, 2, 3];
+                        } else if (currentPage === totalPages) {
+                            pageNumbers = [totalPages - 2, totalPages - 1, totalPages];
+                        } else {
+                            pageNumbers = [currentPage - 1, currentPage, currentPage + 1];
+                        }
 
-            return pageNumbers.map((page) => (
-                <Pagination.Item
-                    key={page}
-                    active={page === currentPage}
-                    onClick={() => setCurrentPage(page)}
-                >
-                    {page}
-                </Pagination.Item>
-            ));
-        })()}
+                        return pageNumbers.map((page) => (
+                            <Pagination.Item
+                                key={page}
+                                active={page === currentPage}
+                                onClick={() => setCurrentPage(page)}
+                            >
+                                {page}
+                            </Pagination.Item>
+                        ));
+                    })()}
 
-        <Pagination.Next
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-        />
-    </Pagination>
-)}
+                    <Pagination.Next
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                    />
+                </Pagination>
+            )}
+
+            <ModalComponent
+                title="Confirm Download"
+                message="Are you sure you want to download the attendance report as a PDF?"
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                onConfirm={() => {
+                    const generatePDF = DownloadTablePDF({ columns: headers, data: filteredSessions, fileName: "Attendance.pdf" });
+                    generatePDF(); 
+                    setShowModal(false);
+                }}
+                
+            />
 
         </div>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, BarChart, Settings, CalendarCheck } from "lucide-react";
+import { Home, BarChart, Settings, CalendarCheck, QrCode } from "lucide-react";
 
 const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent }) => {
     return (
@@ -19,9 +19,13 @@ const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent }
                     <CalendarCheck size={24} className="mx-auto" />
                     {isSidebarExpanded && <span className="ms-2">Attendance</span>}
                 </li>
-                <li className="nav-item mt-5" onClick={() => setActiveComponent("Stats")}>
+                <li className="nav-item mt-5" onClick={() => setActiveComponent("stats")}>
                     <BarChart size={24} className="mx-auto" />
                     {isSidebarExpanded && <span className="ms-2">Stats</span>}
+                </li>
+                <li className="nav-item mt-5" onClick={() => setActiveComponent("qrcode")}>
+                    <QrCode size={24} className="mx-auto" />
+                    {isSidebarExpanded && <span className="ms-2">QR Code</span>}
                 </li>
                 <li className="nav-item mt-5" onClick={() => setActiveComponent("settings")}>
                     <Settings size={24} className="mx-auto" />

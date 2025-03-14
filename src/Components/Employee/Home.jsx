@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Alert } from "react-bootstrap";
 import { Mail, Shield, Clock, User, Calendar, AlertCircle } from "lucide-react";
-import ModalComponent from "../Modals/ModalComponent";
 import { getEmployeeLeaves } from "../../Services/Users";
 import ApplyLeave from "./ApplyLeave";
 
 const Home = ({ employee, manager }) => {
-    const [showModal, setShowModal] = useState(false);
     const [showCalendar, setShowCalendar] = useState(false);
     const [existingLeaves, setExistingLeaves] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +36,7 @@ const Home = ({ employee, manager }) => {
                 setIsLoading(true);
                 try {
                     const leavesData = await getEmployeeLeaves(employee.id);
-                    const todayDate = today.toISOString().split('T')[0]; // Get today's date as YYYY-MM-DD string
+                    const todayDate = today.toISOString().split('T')[0];
                     const filteredLeaves = (leavesData[currentYear] || []).filter(
                         date => date >= todayDate
                     );
