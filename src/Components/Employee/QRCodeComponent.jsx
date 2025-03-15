@@ -32,7 +32,7 @@ const QRCodeComponent = ({ employee }) => {
     }, [employee]);
 
     return (
-        <div className="text-center">
+        <div className="text-center" style={{ marginTop: "85px" }}>
             <h5>Scan QR Code</h5>
             {encodedData ? <QRCodeCanvas value={encodedData} size={200} /> : <p>Generating QR...</p>}
         </div>

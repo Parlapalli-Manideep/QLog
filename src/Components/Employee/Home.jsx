@@ -13,10 +13,10 @@ const Home = ({ employee, manager }) => {
 
     const today = React.useMemo(() => new Date(), []);
     const currentYear = today.getFullYear().toString();
-    
-    const loginSessions = employee?.LoginSessions || [];    
+
+    const loginSessions = employee?.LoginSessions || [];
     const lastSession = loginSessions.length > 0 ? loginSessions[loginSessions.length - 1] : null;
-    const isActive = lastSession && !lastSession.logoutTime;    
+    const isActive = lastSession && !lastSession.logoutTime;
 
     const employeeDetails = [
         { label: "Employee ID", value: employee.id, icon: <User size={24} className="text-primary me-2" /> },
@@ -40,7 +40,7 @@ const Home = ({ employee, manager }) => {
                     const filteredLeaves = (leavesData[currentYear] || []).filter(
                         date => date >= todayDate
                     );
-                    setExistingLeaves(filteredLeaves); 
+                    setExistingLeaves(filteredLeaves);
                 } catch (error) {
                     console.error("Error fetching leaves:", error);
                     setErrorMessage("Failed to load existing leave data.");
@@ -49,15 +49,15 @@ const Home = ({ employee, manager }) => {
                 }
             }
         };
-    
+
         fetchLeaves();
-    }, [employee?.id, currentYear, today]); 
+    }, [employee?.id, currentYear, today]);
 
     const handleLeaveApplied = (updatedLeaves, selectedDates) => {
         setSuccessMessage("Leave successfully applied for: " + selectedDates.join(", "));
         setExistingLeaves(updatedLeaves);
         setShowCalendar(false);
-        
+
         setTimeout(() => setSuccessMessage(""), 3000);
     };
 
@@ -131,7 +131,7 @@ const Home = ({ employee, manager }) => {
                                 Apply for Leave
                             </Button>
                         ) : (
-                            <ApplyLeave 
+                            <ApplyLeave
                                 employee={employee}
                                 onLeaveApplied={handleLeaveApplied}
                                 onCancel={handleCancel}
@@ -146,6 +146,7 @@ const Home = ({ employee, manager }) => {
                     <h5 className="fw-semibold mb-3 fw-bold text-primary">Upcoming Leave Days</h5>
                     <div className="d-flex flex-wrap">
                         {existingLeaves
+                            .filter(date => new Date(date) >= new Date(today.setHours(0, 0, 0, 0))) 
                             .sort((a, b) => new Date(a) - new Date(b))
                             .map(date => (
                                 <span key={date} className="badge bg-primary me-2 mb-2 p-2">
@@ -159,6 +160,7 @@ const Home = ({ employee, manager }) => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 };

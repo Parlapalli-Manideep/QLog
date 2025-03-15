@@ -8,6 +8,7 @@ import SideBar from "../../Components/Common/Sidebar";
 import Home from "../../Components/Employee/Home"; 
 import Stats from "../../Components/Employee/Stats";
 import QRCodeComponent from "../../Components/Employee/QRCodeComponent";
+import Profile from "../../Components/Employee/Profile";
 
 const Employee = () => {
     const location = useLocation();
@@ -63,7 +64,7 @@ const Employee = () => {
                     {activeComponent === "attendance" && <Attendance loginSessions={employee.LoginSessions}/>}
                     {activeComponent === "stats" && <Stats loginSessions={employee.LoginSessions} leaves = {employee.Leaves}/>}
                     {activeComponent === "qrcode" && <QRCodeComponent employee={employee}/>}
-                    {activeComponent === "settings" && <h1>Settings</h1>}
+                    {activeComponent === "profile" && <Profile employee={employee}/>}
                 </div>
             </div>
         </div>

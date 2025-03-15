@@ -44,16 +44,19 @@ const Attendance = ({ loginSessions }) => {
     };
 
     return (
-        <div style={{ marginTop: "85px" }} className="p-4 bg-white shadow-sm rounded">
+        <div style={{ marginTop: "85px auto auto 75px" }} className="p-4 bg-white shadow-sm rounded">
 
-            <div className=" mb-3 d-flex justify-content-between py-1 px-2" style={{ backgroundColor: "#f0f0f0", borderRadius: "5px" }}>
-                <h4 className="mb-0 fw-bold">
+            <div className="mb-3 d-flex align-items-center justify-content-between p-3 shadow-sm"
+                style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+
+                <h4 className="mb-0 fw-bold text-primary">
                     Employee Attendance Records
                 </h4>
-                <Button variant="link" onClick={() => setShowModal(true)}>
-                    <Download size={24} color="black" />
-                </Button>
 
+                <Button variant="light" className="d-flex align-items-center" onClick={() => setShowModal(true)}>
+                    <Download size={24} color="#333" className="me-2" />
+                    <span className="fw-semibold">Download</span>
+                </Button>
             </div>
 
 
@@ -158,10 +161,10 @@ const Attendance = ({ loginSessions }) => {
                 onClose={() => setShowModal(false)}
                 onConfirm={() => {
                     const generatePDF = DownloadTablePDF({ columns: headers, data: filteredSessions, fileName: "Attendance.pdf" });
-                    generatePDF(); 
+                    generatePDF();
                     setShowModal(false);
                 }}
-                
+
             />
 
         </div>

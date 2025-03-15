@@ -7,7 +7,6 @@ export function AuthLayout({ children, title, subtitle }) {
 
       <div className="d-flex flex-column flex-lg-row w-100" style={{ maxWidth: '64rem' }}>
         
-        {/* Image Side */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -22,7 +21,6 @@ export function AuthLayout({ children, title, subtitle }) {
           </div>
         </motion.div>
 
-        {/* Form Side */}
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -33,7 +31,6 @@ export function AuthLayout({ children, title, subtitle }) {
           >
             <div className="mb-4 text-center">
               <h4 className="display-5 fw-bold text-primary mb-2">{title}</h4>
-              {/* <p className="text-muted">{subtitle}</p> */}
             </div>
             {children}
           </div>

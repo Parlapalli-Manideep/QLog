@@ -1,19 +1,9 @@
-// export const calculateWorkingHours = (loginTime, logoutTime) => {
-//     if (!loginTime || !logoutTime) return "N/A";
-    
-//     const loginDate = new Date(loginTime);
-//     const logoutDate = new Date(logoutTime);
-//     const workHours = (logoutDate - loginDate) / (1000 * 60 * 60);
-    
-//     return workHours.toFixed(2) + " hrs";
-// };
-
 export const calculateWorkingHours = (loginTime, logoutTime) => {
     if (!loginTime || !logoutTime) return "N/A";
 
     const loginDate = new Date(loginTime);
     const logoutDate = new Date(logoutTime);
-    const totalMinutes = Math.floor((logoutDate - loginDate) / (1000 * 60)); // Convert milliseconds to total minutes
+    const totalMinutes = Math.floor((logoutDate - loginDate) / (1000 * 60));
 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
@@ -31,33 +21,15 @@ export const classifySession = (loginTime, logoutTime) => {
     return "Normal";
 };
 
-
-// export const filterSessions = (sessions, startDate, endDate, sessionType) => {
-//     return sessions
-//         .filter(({ logoutTime }) => logoutTime) 
-//         .filter(({ loginTime }) => {
-//             const date = new Date(loginTime);
-//             return (!startDate || date >= startDate) && (!endDate || date <= endDate);
-//         })
-//         .filter(({ loginTime, logoutTime }) => {
-//             const workMinutes = (new Date(logoutTime) - new Date(loginTime)) / (1000 * 60); 
-            
-//             if (sessionType === "Early Logout") return workMinutes < 480; 
-//             if (sessionType === "OT") return workMinutes > 510; 
-//             if (sessionType === "Normal") return workMinutes >= 480 && workMinutes <= 510; 
-//             return true; 
-//         });
-// };
-
 export const filterSessions = (sessions, startDate, endDate, sessionType) => {
     return sessions
-        .filter(({ logoutTime }) => logoutTime) // Ensure session is completed
+        .filter(({ logoutTime }) => logoutTime) 
         .filter(({ loginTime }) => {
             const date = new Date(loginTime);
             return (!startDate || date >= startDate) && (!endDate || date <= endDate);
         })
         .filter(({ loginTime, logoutTime }) => {
-            if (sessionType === "All Sessions") return true; // ✅ Allow all sessions when "All Sessions" is selected
+            if (sessionType === "All Sessions") return true;
 
             const workMinutes = (new Date(logoutTime) - new Date(loginTime)) / (1000 * 60); 
 
