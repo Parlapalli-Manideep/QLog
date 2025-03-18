@@ -78,17 +78,16 @@
         }
       ],
       "leaveRequests": [
-        "2025-03-22",
         "2025-03-26",
-        "2025-03-27",
-        "2025-03-28",
         "2025-03-29"
       ],
       "leaves": [
         "2025-02-28",
         "2025-03-13",
         "2025-03-14",
-        "2025-03-25"
+        "2025-03-25",
+        "2025-03-22",
+        "2025-03-27"
       ]
     },
     {
@@ -107,6 +106,146 @@
       ],
       "leaveRequests": [],
       "leaves": []
+    },
+    {
+      "id": "1742268793912",
+      "name": "ramesh",
+      "email": "ramesh@gmail.com",
+      "password": "Ram@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934871",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-18T09:00:00+05:30",
+          "logoutTime": null
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": []
+    },
+    {
+      "id": "1742268793913",
+      "name": "suresh",
+      "email": "suresh@gmail.com",
+      "password": "Sur@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934872",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-18T10:30:00+05:30",
+          "logoutTime": "2025-03-18T17:30:00+05:30"
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": []
+    },
+    {
+      "id": "1742268793914",
+      "name": "vignesh",
+      "email": "vignesh@gmail.com",
+      "password": "Vig@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934872",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-18T08:00:00+05:30",
+          "logoutTime": null
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": []
+    },
+    {
+      "id": "1742268793915",
+      "name": "arun",
+      "email": "arun@gmail.com",
+      "password": "Arun@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934873",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-17T10:00:00+05:30",
+          "logoutTime": "2025-03-17T18:00:00+05:30"
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": [
+        "2025-03-18"
+      ]
+    },
+    {
+      "id": "1742268793916",
+      "name": "kiran",
+      "email": "kiran@gmail.com",
+      "password": "Kir@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934873",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-17T09:30:00+05:30",
+          "logoutTime": "2025-03-17T16:30:00+05:30"
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": [
+        "2025-03-18"
+      ]
+    },
+    {
+      "id": "1742268793917",
+      "name": "mahesh",
+      "email": "mahesh@gmail.com",
+      "password": "Mah@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934874",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-18T11:00:00+05:30",
+          "logoutTime": "2025-03-18T15:00:00+05:30"
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": []
+    },
+    {
+      "id": "1742268793918",
+      "name": "sachin",
+      "email": "sachin@gmail.com",
+      "password": "Sach@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934875",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-18T07:30:00+05:30",
+          "logoutTime": "2025-03-18T16:30:00+05:30"
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": []
+    },
+    {
+      "id": "1742268793919",
+      "name": "praveen",
+      "email": "praveen@gmail.com",
+      "password": "Pra@123",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742046934875",
+      "loginSessions": [
+        {
+          "loginTime": "2025-03-18T12:30:00+05:30",
+          "logoutTime": "2025-03-18T20:30:00+05:30"
+        }
+      ],
+      "leaveRequests": [],
+      "leaves": []
     }
   ],
   "manager": [
@@ -118,11 +257,19 @@
       "method": "google",
       "staff": [
         "1741873214002",
-        "1742268793911"
+        "1742268793911",
+        "1742268793912",
+        "1742268793913",
+        "1742268793914",
+        "1742268793915",
+        "1742268793916",
+        "1742268793917",
+        "1742268793918",
+        "1742268793919"
       ],
       "location": {
-        "latitude": 17.381185732922507,
-        "longitude": 78.46529360056653,
+        "latitude": 17.384486736741806,
+        "longitude": 78.50314233319318,
         "radius": 100
       }
     }

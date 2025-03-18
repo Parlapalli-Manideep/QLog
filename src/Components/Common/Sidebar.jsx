@@ -31,7 +31,6 @@ const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent, 
             onMouseEnter={() => setIsSidebarExpanded(true)}
             onMouseLeave={() => setIsSidebarExpanded(false)}
         >
-            <div className="text-center mb-4">Menu</div>
             <ul className="nav flex-column">
                 {menuItems.map((item) => (
                     <li

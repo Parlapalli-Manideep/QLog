@@ -2,3 +2,6 @@ button {
     outline: none;
     border: none;
 }
+.navbar {
+    height: 10vh;
+}

@@ -32,8 +32,6 @@ function LandingPage() {
                 handleFooter={() => handleScroll(footerRef)}
             />
 
-            <div style={{ paddingTop: "70px" }}></div>
-
             <Home homeRef={homeRef} />
             <Features featuresRef={featuresRef} />
             <About aboutRef={aboutRef} />

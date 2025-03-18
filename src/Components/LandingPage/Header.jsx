@@ -14,7 +14,7 @@ function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, han
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+            <nav className="navbar navbar-expand-lg bg-body-tertiary sticky-top px-2">
                 <div className="container-fluid">
                     <img 
                         src="https://preview.redd.it/itachi-uchiha-v0-lkypptlpl8nd1.jpeg?auto=webp&s=2d798537a7ab59725da65a6c580498f6e1360192" 
@@ -44,7 +44,7 @@ function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, han
                                 <button onClick={() => { handleFaqSection(); closeNavbar(); }} className="nav-link">FAQ's</button>
                             </li>
                             <li className="nav-item">
-                                <button onClick={() => { handleFooter(); closeNavbar(); }} className="nav-link">Footer</button>
+                                <button onClick={() => { handleFooter(); closeNavbar(); }} className="nav-link">Contact</button>
                             </li>
                         </ul>
 

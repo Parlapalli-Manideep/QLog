@@ -40,15 +40,7 @@ const Employee = () => {
 
     return (
         <div className="d-flex">
-            <SideBar
-                isSidebarExpanded={isSidebarExpanded}
-                setIsSidebarExpanded={setIsSidebarExpanded}
-                setActiveComponent={setActiveComponent}
-                role="employee"
-            />
-
             <div className="ms-auto" style={{ marginLeft: isSidebarExpanded ? "200px" : "70px", transition: "0.3s", width: "100%" }}>
-                
                 {employee && (
                     <ManagerIdModal
                         employee={employee}
@@ -66,7 +58,12 @@ const Employee = () => {
                 )}
 
                 {employee && <Header name={employee.name} id={employee.managerId} role={employee.role} />}
-
+                <SideBar
+                    isSidebarExpanded={isSidebarExpanded}
+                    setIsSidebarExpanded={setIsSidebarExpanded}
+                    setActiveComponent={setActiveComponent}
+                    role="employee"
+                />
                 <div className="container mt-4">
                     {manager && activeComponent === "home" && <Home employee={employee} manager={manager} />}
                     {manager && activeComponent === "attendance" && <Attendance loginSessions={employee.loginSessions} />}

@@ -27,7 +27,7 @@ const Header = ({ name, id, role }) => {
 
     return (
         <>
-            <header className="d-flex justify-content-between align-items-center px-4 py-2 bg-light shadow-sm position-sticky top-0 z-3">
+            <header className="d-flex justify-content-between align-items-center px-4 py-2 bg-light shadow-sm position-sticky top-0 z-2">
                 <div>
                     <h5 className="mb-0 fw-bold">{name || role }</h5>
                     <small className="text-muted">Manager ID: {id || "N/A"}</small>

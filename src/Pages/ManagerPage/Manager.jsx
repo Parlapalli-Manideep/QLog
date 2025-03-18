@@ -26,8 +26,7 @@ function Manager() {
 
     return (
         <div className="d-flex">
-            
-            <div className="ms-auto" style={{ marginLeft: isSidebarExpanded ? "200px" : "70px", transition: "0.3s", width: "100%" }}>
+             <div className="ms-auto" style={{ marginLeft: isSidebarExpanded ? "200px" : "70px", transition: "0.3s", width: "100%" }}>
                 {manager && (
                     <Header
                         name={manager.name}

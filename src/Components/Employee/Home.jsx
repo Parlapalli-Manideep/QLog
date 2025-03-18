@@ -118,7 +118,7 @@ const Home = ({ employee, manager }) => {
 
                     <div className="p-3 shadow-sm rounded bg-light flex-grow-1">
                         <p className="text-muted mb-1">Contact</p>
-                        <p className="fw-bold">{manager?.email || "N/A"}</p>
+                        <p><a href={`mailto:${manager?.email}`} className="text-primary fw-bold text-decoration-none">{manager?.email || "N/A"}</a></p>
                     </div>
                 </div>
             </div>

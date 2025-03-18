@@ -26,17 +26,15 @@ const Home = ({ manager }) => {
 
     for (const employeeId of manager.staff) {
       const employee = await getUserById(employeeId, "employee");
-
+      
       if (employee?.loginSessions?.length > 0) {
         const lastSession = employee.loginSessions[employee.loginSessions.length - 1];
 
         if (lastSession.loginTime && !lastSession.logoutTime) {
           activeCount++;
         }
-      }
-
-      const currentYear = new Date().getFullYear().toString();
-      if (employee?.Leaves?.[currentYear]?.includes(todayDate)) {
+      }      
+      if (employee?.leaves?.includes(todayDate)) {
         leaveCount++;
       }
     }
@@ -106,7 +104,7 @@ const Home = ({ manager }) => {
   };
 
   return (
-    <div className="container" style={{ margin: "85px auto auto 20px" }}>
+    <div className="container" style={{ marginLeft: "20px" }}>
       {message.text && (
         <Alert variant={message.type} dismissible>
           {message.text}

@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
-import { getUserById } from "../../Services/Users";
-import { Table, Button, Form, Card, Pagination } from "react-bootstrap";
-import { UserCheck, UserX, Eye, ArrowLeft, User, Mail } from "lucide-react";
+import { getUserById, updateUser } from "../../Services/Users";
+import { Table, Button, Form, Card, Pagination, Badge } from "react-bootstrap";
+import { UserCheck, UserX, Eye, ArrowLeft, User, Mail, Calendar } from "lucide-react";
 import Profile from "../Employee/Profile";
 import Attendance from "../Employee/Attendance";
+import LeaveRequestsModal from "../Modals/LeaveRequestModal";
 
 const Employees = ({ staff }) => {
     const [employees, setEmployees] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filter, setFilter] = useState("all");
+    const [leaveFilter, setLeaveFilter] = useState("all");
     const [selectedProfile, setSelectedProfile] = useState(null);
     const [selectedAttendance, setSelectedAttendance] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showLeaveModal, setShowLeaveModal] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
     const employeesPerPage = 8;
 
     useEffect(() => {
@@ -29,14 +33,56 @@ const Employees = ({ staff }) => {
         }
     };
 
+    const handleLeaveAction = async (action, date) => {
+        try {
+            const updatedEmployee = { ...selectedEmployee };
+            
+            // Remove the date from leaveRequests
+            updatedEmployee.leaveRequests = updatedEmployee.leaveRequests.filter(d => d !== date);
+            
+            // If approved, add to leaves array
+            if (action === "approve") {
+                updatedEmployee.leaves = [...(updatedEmployee.leaves || []), date];
+            }
+            
+            // Update the employee data
+            await updateUser(selectedEmployee.email, selectedEmployee.role, {
+                leaveRequests: updatedEmployee.leaveRequests,
+                leaves: updatedEmployee.leaves
+            });
+            
+            // Update local state
+            setSelectedEmployee(updatedEmployee);
+            
+            // Refresh the employee list
+            fetchEmployees();
+            
+            // If no more leave requests, close the modal
+            if (updatedEmployee.leaveRequests.length === 0) {
+                setShowLeaveModal(false);
+            }
+        } catch (error) {
+            console.error("Error handling leave action:", error);
+        }
+    };
+
     const filteredEmployees = employees.filter(emp => {
         const nameMatch = emp.name.toLowerCase().includes(searchQuery.toLowerCase());
-        const lastSession = emp?.LoginSessions?.[emp.LoginSessions.length - 1];
+        const lastSession = emp?.loginSessions?.[emp.loginSessions.length - 1];
         const isActive = lastSession?.loginTime?.startsWith(new Date().toISOString().split("T")[0]) && !lastSession?.logoutTime;
-
-        if (filter === "active") return nameMatch && isActive;
-        if (filter === "inactive") return nameMatch && !isActive;
-        return nameMatch;
+        const hasLeaveRequests = emp.leaveRequests && emp.leaveRequests.length > 0;
+        
+        // Status filter (active/inactive)
+        let statusMatch = true;
+        if (filter === "active") statusMatch = isActive;
+        if (filter === "inactive") statusMatch = !isActive;
+        
+        // Leave requests filter
+        let leaveMatch = true;
+        if (leaveFilter === "requests") leaveMatch = hasLeaveRequests;
+        if (leaveFilter === "no-requests") leaveMatch = !hasLeaveRequests;
+        
+        return nameMatch && statusMatch && leaveMatch;
     });
 
     const indexOfLastEmployee = currentPage * employeesPerPage;
@@ -50,28 +96,31 @@ const Employees = ({ staff }) => {
         setSelectedAttendance(null);
     };
 
+    const openLeaveModal = (emp) => {
+        setSelectedEmployee(emp);
+        setShowLeaveModal(true);
+    };
+
     return (
-        <div className="container" style={{ margin: "85px auto auto 20px" }}>
+        <div className="container" style={{ marginLeft: "20px" }}>
+            {/* Back button - always visible */}
+            <div className="d-flex justify-content-start mb-3">
+                <Button 
+                    variant="success"
+                    onClick={handleBack} 
+                    className="shadow-sm" 
+                    style={{ display: selectedProfile || selectedAttendance ? "block" : "none" }}
+                >
+                    <ArrowLeft size={18} className="me-2" /> Back
+                </Button>
+            </div>
+
             {selectedProfile && (
-                <>
-                    <Profile employee={selectedProfile} />
-                    <div className="d-flex justify-content-center mt-4">
-                        <Button variant="dark" onClick={handleBack}>
-                            <ArrowLeft size={18} className="me-2" /> Back
-                        </Button>
-                    </div>
-                </>
+                <Profile employee={selectedProfile} />
             )}
 
             {selectedAttendance && (
-                <>
-                    <Attendance loginSessions={selectedAttendance} />
-                    <div className="d-flex justify-content-center mt-4">
-                        <Button variant="dark" onClick={handleBack}>
-                            <ArrowLeft size={18} className="me-2" /> Back
-                        </Button>
-                    </div>
-                </>
+                <Attendance loginSessions={selectedAttendance} />
             )}
 
             {!selectedProfile && !selectedAttendance && (
@@ -91,7 +140,7 @@ const Employees = ({ staff }) => {
                             />
                         </div>
 
-                        <div style={{ width: "200px", flexShrink: 0 }}>
+                        <div style={{ width: "180px", flexShrink: 0 }}>
                             <Form.Select
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value)}
@@ -100,6 +149,18 @@ const Employees = ({ staff }) => {
                                 <option value="all">All Employees</option>
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
+                            </Form.Select>
+                        </div>
+
+                        <div style={{ width: "180px", flexShrink: 0 }}>
+                            <Form.Select
+                                value={leaveFilter}
+                                onChange={(e) => setLeaveFilter(e.target.value)}
+                                className="border-primary w-100"
+                            >
+                                <option value="all">All Requests</option>
+                                <option value="requests">With Requests</option>
+                                <option value="no-requests">No Requests</option>
                             </Form.Select>
                         </div>
                     </div>
@@ -114,13 +175,15 @@ const Employees = ({ staff }) => {
                                     <th>STATUS</th>
                                     <th>ATTENDANCE</th>
                                     <th>PROFILE</th>
+                                    <th>LEAVES</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {currentEmployees.length > 0 ? (
                                     currentEmployees.map((emp) => {
-                                        const lastSession = emp?.LoginSessions?.[emp.LoginSessions.length - 1];
+                                        const lastSession = emp?.loginSessions?.[emp.loginSessions.length - 1];
                                         const isActive = lastSession?.loginTime?.startsWith(new Date().toISOString().split("T")[0]) && !lastSession?.logoutTime;
+                                        const hasLeaveRequests = emp.leaveRequests && emp.leaveRequests.length > 0;
 
                                         return (
                                             <tr key={emp.id} className="text-center align-middle">
@@ -136,7 +199,7 @@ const Employees = ({ staff }) => {
                                                     {isActive ? "Active" : "Inactive"}
                                                 </td>
                                                 <td>
-                                                    <Button variant="warning" className="text-dark fw-bold shadow-sm" onClick={() => setSelectedAttendance(emp.LoginSessions)}>
+                                                    <Button variant="warning" className="text-dark fw-bold shadow-sm" onClick={() => setSelectedAttendance(emp.loginSessions)}>
                                                         <Eye size={16} className="me-1" /> Attendance
                                                     </Button>
                                                 </td>
@@ -145,12 +208,27 @@ const Employees = ({ staff }) => {
                                                         <User size={16} className="me-1" /> Profile
                                                     </Button>
                                                 </td>
+                                                <td>
+                                                    <Button 
+                                                        variant={hasLeaveRequests ? "danger" : "secondary"} 
+                                                        className="fw-bold shadow-sm" 
+                                                        onClick={() => openLeaveModal(emp)}
+                                                        disabled={!hasLeaveRequests}
+                                                    >
+                                                        <Calendar size={16} className="me-1" /> 
+                                                        {hasLeaveRequests ? (
+                                                            <>
+                                                                Requests <Badge bg="light" text="dark" pill>{emp.leaveRequests.length}</Badge>
+                                                            </>
+                                                        ) : "No Requests"}
+                                                    </Button>
+                                                </td>
                                             </tr>
                                         );
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="text-center text-muted fw-bold">
+                                        <td colSpan="7" className="text-center text-muted fw-bold">
                                             No Employees Found
                                         </td>
                                     </tr>
@@ -170,6 +248,14 @@ const Employees = ({ staff }) => {
                     )}
                 </Card>
             )}
+
+            {/* Leave Requests Modal - now using the separate component */}
+            <LeaveRequestsModal
+                show={showLeaveModal}
+                onHide={() => setShowLeaveModal(false)}
+                employee={selectedEmployee}
+                onLeaveAction={handleLeaveAction}
+            />
         </div>
     );
 };
