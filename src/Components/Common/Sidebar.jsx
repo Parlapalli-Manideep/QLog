@@ -1,13 +1,28 @@
 import React, { useState } from "react";
-import { Home, BarChart, CalendarCheck, QrCode, User } from "lucide-react";
+import { Home, BarChart, CalendarCheck, Users, Settings, QrCode, User } from "lucide-react";
 
-const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent }) => {
+const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent, role }) => {
     const [activeItem, setActiveItem] = useState("home");
+
 
     const handleItemClick = (item) => {
         setActiveItem(item);
         setActiveComponent(item);
     };
+
+    const menuItems = role === "manager" ? [
+        { name: "home", label: "Home", icon: <Home size={24} /> },
+        { name: "employees", label: "Employees", icon: <Users size={24} /> },
+        { name: "analytics", label: "Analytics", icon: <BarChart size={24} /> },
+        { name: "schedule", label: "Schedule", icon: <CalendarCheck size={24} /> },
+        { name: "settings", label: "Settings", icon: <Settings size={24} /> },
+    ] : [
+        { name: "home", label: "Home", icon: <Home size={24} /> },
+        { name: "attendance", label: "Attendance", icon: <CalendarCheck size={24} /> },
+        { name: "stats", label: "Stats", icon: <BarChart size={24} /> },
+        { name: "qrcode", label: "QR Code", icon: <QrCode size={24} /> },
+        { name: "profile", label: "Profile", icon: <User size={24} /> },
+    ];
 
     return (
         <div
@@ -18,13 +33,7 @@ const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent }
         >
             <div className="text-center mb-4">Menu</div>
             <ul className="nav flex-column">
-                {[
-                    { name: "home", label: "Home", icon: <Home size={24} /> },
-                    { name: "attendance", label: "Attendance", icon: <CalendarCheck size={24} /> },
-                    { name: "stats", label: "Stats", icon: <BarChart size={24} /> },
-                    { name: "qrcode", label: "QR Code", icon: <QrCode size={24} /> },
-                    { name: "profile", label: "Profile", icon: <User size={24} /> },
-                ].map((item) => (
+                {menuItems.map((item) => (
                     <li
                         key={item.name}
                         className={`nav-item mt-3 p-2 d-flex align-items-center rounded`}
@@ -48,7 +57,6 @@ const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent }
                         <div>{item.icon}</div>
                         {isSidebarExpanded && <span className="ms-3">{item.label}</span>}
                     </li>
-
                 ))}
             </ul>
         </div>

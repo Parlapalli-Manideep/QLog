@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const ProfilePage = ({ employee = {} }) => {
+const ProfilePage = ({ employee }) => {
     const defaultProfile = {
         profilePic: "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg",
         location: "",
@@ -33,9 +33,13 @@ const ProfilePage = ({ employee = {} }) => {
         setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
     };
 
-    const loginDate = employee?.LoginSessions?.[0]?.loginTime
-        ? new Date(employee.LoginSessions[0].loginTime).toLocaleDateString("en-GB")
-        : "N/A";
+    const loginDate = employee?.loginSessions?.[0]?.loginTime
+    ? new Date(employee.loginSessions[0].loginTime).toLocaleDateString("en-GB", {
+        timeZone: "Asia/Kolkata"
+    })
+    : "N/A";
+
+
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -60,12 +64,12 @@ const ProfilePage = ({ employee = {} }) => {
     };
 
     return (
-        <div className="container mt-4 position-relative">
+        <div className="container position-relative" style={{marginLeft:"20px"}}>
             {editing && (
                 <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 backdrop-blur" style={{ zIndex: 10 }}></div>
             )}
 
-            <div className="position-relative bg-primary text-white p-4 rounded-top text-center" style={{ height: "140px" }}></div>
+            <div className="position-relative bg-primary text-white rounded-top text-center" style={{ height: "140px" }}></div>
 
             <div className="text-center" style={{ marginTop: "-70px" }}>
                 <div className="d-inline-block position-relative border border-4 border-white rounded-circle overflow-hidden" style={{ width: "140px", height: "140px" }}>

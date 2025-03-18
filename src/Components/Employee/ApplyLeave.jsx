@@ -8,6 +8,7 @@ import { updateUser, getEmployeeLeaves } from "../../Services/Users";
 const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
     const [selectedDates, setSelectedDates] = useState([]);
     const [existingLeaves, setExistingLeaves] = useState([]);
+    const [pendingLeaves, setPendingLeaves] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -15,17 +16,29 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
     const today = new Date();
     const minDate = new Date(today);
     minDate.setDate(today.getDate() + 1);
+    
     const maxDate = new Date();
-    maxDate.setMonth(today.getMonth() + 1);
+    maxDate.setMonth(today.getMonth() + 3);
+    
     const currentYear = new Date().getFullYear().toString();
+
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
     React.useEffect(() => {
         const fetchLeaves = async () => {
             if (employee?.id) {
                 setIsLoading(true);
                 try {
-                    const leavesData = await getEmployeeLeaves(employee.id);
-                    setExistingLeaves(leavesData[currentYear] || []);
+                    const leavesData = employee.leaves || {};
+                    setExistingLeaves(leavesData || []);
+                    
+                    const pendingRequests = employee.leaveRequests || [];
+                    setPendingLeaves(pendingRequests);
                 } catch (error) {
                     console.error("Error fetching leaves:", error);
                     setErrorMessage("Failed to load existing leave data.");
@@ -39,7 +52,7 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
     }, [employee?.id]);
 
     const toggleDateSelection = (date) => {
-        const formattedDate = date.toLocaleDateString("en-CA"); 
+        const formattedDate = formatDate(date);
 
         if (existingLeaves.includes(formattedDate)) {
             setErrorMessage("This date already has an approved leave.");
@@ -47,13 +60,19 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
             return;
         }
 
+        if (pendingLeaves.includes(formattedDate)) {
+            setErrorMessage("This date already has a pending leave request.");
+            setTimeout(() => setErrorMessage(""), 3000);
+            return;
+        }
+
         setSelectedDates((prevDates) => {
             if (prevDates.includes(formattedDate)) {
                 return prevDates.filter((d) => d !== formattedDate);
-            } else if (prevDates.length < 2) {
-                return [...prevDates, formattedDate];
+            } else if (prevDates.length < 5) { 
+                return [...prevDates, formattedDate].sort();
             } else {
-                setErrorMessage("You can only select up to two leave dates. Please contact your manager for additional leave requests.");
+                setErrorMessage("You can only select up to five leave dates. Please contact your manager for additional leave requests.");
                 setTimeout(() => setErrorMessage(""), 3000);
                 return prevDates;
             }
@@ -68,43 +87,29 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
     
         setIsLoading(true);
         try {
-            const leavesData = await getEmployeeLeaves(employee.id);
-            
-            if (!leavesData[currentYear]) {
-                leavesData[currentYear] = [];
-            }
-            
-            const yearLeaves = leavesData[currentYear];
+            const yearLeaves = employee.leaves?.[currentYear] || [];
+            const currentPendingLeaves = employee.leaveRequests || [];
+            const totalPendingAndApproved = yearLeaves.length + currentPendingLeaves.length;
     
-            if (yearLeaves.length >= 15) {
-                setErrorMessage("You have already used the maximum of 15 leave days.");
+            if (totalPendingAndApproved + selectedDates.length > 15) {
+                setErrorMessage(`You can only select ${15 - totalPendingAndApproved} more leave day(s).`);
                 setIsLoading(false);
                 return;
             }
     
-            if (yearLeaves.length + selectedDates.length > 15) {
-                setErrorMessage(`You can only select ${15 - yearLeaves.length} more leave day(s).`);
-                setIsLoading(false);
-                return;
-            }
-    
-            const updatedYearLeaves = [...yearLeaves, ...selectedDates].sort();
-            
-            const updatedLeaves = {
-                ...leavesData,
-                [currentYear]: updatedYearLeaves
-            };
+            const updatedLeaveRequests = [...new Set([...currentPendingLeaves, ...selectedDates])].sort();
     
             const updatedUser = await updateUser(employee.email, "employee", { 
-                Leaves: updatedLeaves 
+                ...employee,
+                leaveRequests: updatedLeaveRequests 
             });
     
             if (updatedUser) {
-                setSuccessMessage("Leave applied successfully!");
+                setSuccessMessage("Leave request submitted successfully!");
                 setTimeout(() => setSuccessMessage(""), 3000);
-                onLeaveApplied(updatedYearLeaves, selectedDates);
+                onLeaveApplied(updatedLeaveRequests, selectedDates); 
             } else {
-                setErrorMessage("Failed to update leave information. Please try again.");
+                setErrorMessage("Failed to submit leave request. Please try again.");
             }
         } catch (error) {
             console.error("Error applying leave:", error);
@@ -131,7 +136,7 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
             <p className="text-muted mb-2">
                 <small>
                     <AlertCircle size={16} className="me-1" />
-                    Select up to 2 dates. Dates with existing leave are disabled.
+                    Select up to 5 dates. Dates with existing leave are disabled.
                 </small>
             </p>
             
@@ -142,32 +147,41 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
                 minDate={minDate}
                 maxDate={maxDate}
                 highlightDates={selectedDates.map(date => new Date(date))}
-                filterDate={date => {
-                   
-                    const formattedDate = date.toLocaleDateString("en-CA");
+            
+                filterDate={(date) => {
+                    const formattedDate = formatDate(date);
                     const day = date.getDay();
-                    return day !== 0 && day !== 6 && !existingLeaves.includes(formattedDate);
+                    return (
+                        day !== 0 &&
+                        !existingLeaves.includes(formattedDate) && 
+                        !pendingLeaves.includes(formattedDate)
+                    );
                 }}
-                dayClassName={(date) =>
-                    selectedDates.includes(date.toLocaleDateString("en-CA"))
+                
+                dayClassName={(date) => {
+                    const formattedDate = formatDate(date);
+                    return selectedDates.includes(formattedDate)
                         ? "bg-primary text-white rounded"
-                        : ""
-                }
+                        : "";
+                }}
             />
 
             {selectedDates.length > 0 && (
                 <div className="mt-2 mb-3">
                     <p className="mb-1">Selected dates:</p>
                     <ul className="list-unstyled d-flex flex-wrap">
-                        {selectedDates.map(date => (
-                            <li key={date} className="badge bg-light text-dark me-2 p-2 mb-2">
-                                {new Date(date).toLocaleDateString('en-US', {
-                                    weekday: 'short',
-                                    month: 'short',
-                                    day: 'numeric'
-                                })}
-                            </li>
-                        ))}
+                        {selectedDates.map(date => {
+                            const displayDate = new Date(date);
+                            return (
+                                <li key={date} className="badge bg-light text-dark me-2 p-2 mb-2">
+                                    {displayDate.toLocaleDateString('en-US', {
+                                        weekday: 'short',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    })}
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
             )}

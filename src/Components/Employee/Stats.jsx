@@ -8,14 +8,25 @@ const parseTimestamp = (timestamp) => (timestamp ? new Date(timestamp) : null);
 
 const getWorkingDays = (startDate, endDate) => {
     let workingDays = [];
+    
     let currentDate = new Date(startDate);
-
-    while (currentDate <= endDate) {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    
+    let endDateCopy = new Date(endDate);
+    endDateCopy = new Date(endDateCopy.getFullYear(), endDateCopy.getMonth(), endDateCopy.getDate());
+    
+    while (currentDate <= endDateCopy) {
         if (currentDate.getDay() !== 0) { 
-            workingDays.push(currentDate.toISOString().split("T")[0]);
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const dateString = `${year}-${month}-${day}`;
+            
+            workingDays.push(dateString);
         }
         currentDate.setDate(currentDate.getDate() + 1);
     }
+    
     return workingDays;
 };
 
@@ -45,23 +56,16 @@ const Stats = ({ loginSessions, leaves }) => {
 
     const firstLoginDate = parseTimestamp(loginSessions[0].loginTime);
     const now = new Date();
-    const todayStr = now.toISOString().split("T")[0];
-
-    const lastSession = loginSessions[loginSessions.length - 1];
-    const lastLogin = parseTimestamp(lastSession?.loginTime);
-    const lastLogout = parseTimestamp(lastSession?.logoutTime);
-    const isToday = lastLogin && now.toDateString() === lastLogin.toDateString();
-    const isActive = isToday && !lastLogout;
 
     const [attendanceRange, setAttendanceRange] = useState("1m");
     const [sessionRange, setSessionRange] = useState("1m");
-    
+
     let attendanceStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
     if (attendanceRange === "3m") attendanceStartDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
     else if (attendanceRange === "6m") attendanceStartDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
     else if (attendanceRange === "1y") attendanceStartDate = new Date(now.getFullYear() - 1, 0, 1);
     else if (attendanceRange === "all") attendanceStartDate = firstLoginDate;
-    
+
     if (attendanceStartDate < firstLoginDate) {
         attendanceStartDate = firstLoginDate;
     }
@@ -71,7 +75,7 @@ const Stats = ({ loginSessions, leaves }) => {
     else if (sessionRange === "6m") sessionStartDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
     else if (sessionRange === "1y") sessionStartDate = new Date(now.getFullYear() - 1, 0, 1);
     else if (sessionRange === "all") sessionStartDate = firstLoginDate;
-    
+
     if (sessionStartDate < firstLoginDate) {
         sessionStartDate = firstLoginDate;
     }
@@ -80,9 +84,9 @@ const Stats = ({ loginSessions, leaves }) => {
     const presentDays = new Set(
         loginSessions.map(session => session.loginTime.split("T")[0])
     );
-    
-    const leaveDays = new Set(leaves?.[now.getFullYear()] || []);
-    
+
+    const leaveDays = new Set(leaves || []);
+
     let totalLeaves = 0, totalAbsents = 0, totalPresents = 0;
 
     workingDays.forEach(day => {
@@ -105,11 +109,12 @@ const Stats = ({ loginSessions, leaves }) => {
 
     const filteredSessions = filterByDateRange(loginSessions, sessionStartDate, now);
 
-    let normalSessions = 0, otSessions = 0, earlyLogoutSessions = 0, normalLogoutSessions = 0;
+    let otSessions = 0, earlyLogoutSessions = 0, normalLogoutSessions = 0;
     filteredSessions.forEach((session) => {
         const loginTime = parseTimestamp(session.loginTime);
         const logoutTime = parseTimestamp(session.logoutTime);
         if (!loginTime || !logoutTime) return;
+
         const { totalMinutes } = calculateDuration(loginTime, logoutTime);
         const { status } = getSessionStatus(totalMinutes);
 
@@ -125,13 +130,13 @@ const Stats = ({ loginSessions, leaves }) => {
     ].filter((item) => item.value > 0);
 
     return (
-        <div className="container" style={{ margin: "85px auto auto 75px" }}>
+        <div className="container" style={{ marginLeft: "20px" }}>
             <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="fw-semibold fw-bold text-primary m-0">Attendance Overview</h5>
-                    <Form.Select 
-                        value={attendanceRange} 
-                        onChange={(e) => setAttendanceRange(e.target.value)} 
+                    <Form.Select
+                        value={attendanceRange}
+                        onChange={(e) => setAttendanceRange(e.target.value)}
                         className="w-auto"
                     >
                         <option value="all">All Time</option>
@@ -141,7 +146,7 @@ const Stats = ({ loginSessions, leaves }) => {
                         <option value="1y">Last 1 Year</option>
                     </Form.Select>
                 </div>
-                
+
                 <Row className="mt-4">
                     <Col md={6} className="d-flex">
                         <Card className="p-3 shadow-sm bg-light w-100">
@@ -200,9 +205,9 @@ const Stats = ({ loginSessions, leaves }) => {
             <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="fw-semibold fw-bold text-primary m-0">Session Analysis</h5>
-                    <Form.Select 
-                        value={sessionRange} 
-                        onChange={(e) => setSessionRange(e.target.value)} 
+                    <Form.Select
+                        value={sessionRange}
+                        onChange={(e) => setSessionRange(e.target.value)}
                         className="w-auto"
                     >
                         <option value="all">All Time</option>
@@ -212,7 +217,7 @@ const Stats = ({ loginSessions, leaves }) => {
                         <option value="1y">Last 1 Year</option>
                     </Form.Select>
                 </div>
-                
+
                 <Row className="mt-4">
                     <Col md={6} className="d-flex">
                         <Card className="p-3 shadow-sm bg-light w-100">

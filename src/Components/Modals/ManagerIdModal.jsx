@@ -21,8 +21,9 @@ const ManagerIdModal = ({ employee, show, onClose, onUpdate }) => {
         const updatedEmployee = {
             ...employee,
             managerId,
-            LoginSessions: [],
-            Leaves:{}
+            loginSessions: [],
+            leaveRequests:[],
+            leaves:[]
         };
 
         await updateUser(employee.email, "employee", updatedEmployee);

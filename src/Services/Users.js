@@ -73,11 +73,10 @@ export const getEmployeeLeaves = async (employeeId) => {
   try {
     const employee = await getUserById(employeeId, "employee");
     
-    const leaves = employee?.Leaves || {};
+    const leaves = employee?.leaves || [];
     
-    const currentYear = new Date().getFullYear().toString();
-    if (!leaves[currentYear]) {
-      leaves[currentYear] = [];
+    if (!leaves) {
+      leaves = [];
     }
     
     return leaves;

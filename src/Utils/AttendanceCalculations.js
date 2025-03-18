@@ -1,9 +1,10 @@
 export const calculateWorkingHours = (loginTime, logoutTime) => {
     if (!loginTime || !logoutTime) return "N/A";
 
-    const loginDate = new Date(loginTime);
+    const loginDate = new Date(loginTime); 
     const logoutDate = new Date(logoutTime);
-    const totalMinutes = Math.floor((logoutDate - loginDate) / (1000 * 60));
+
+    const totalMinutes = Math.floor((logoutDate.getTime() - loginDate.getTime()) / (1000 * 60));
 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
@@ -14,29 +15,32 @@ export const calculateWorkingHours = (loginTime, logoutTime) => {
 export const classifySession = (loginTime, logoutTime) => {
     if (!loginTime || !logoutTime) return "Incomplete Session";
 
-    const workMinutes = (new Date(logoutTime) - new Date(loginTime)) / (1000 * 60);
+    const loginDate = new Date(loginTime); 
+    const logoutDate = new Date(logoutTime);
 
-    if (workMinutes < 480) return "Early Logout";
-    if (workMinutes > 510) return "OT";
+    const workMinutes = Math.floor((logoutDate.getTime() - loginDate.getTime()) / (1000 * 60));
+
+    if (workMinutes < 480) return "Early Logout";  
+    if (workMinutes > 510) return "OT"; 
     return "Normal";
 };
 
+
 export const filterSessions = (sessions, startDate, endDate, sessionType) => {
+    const adjustedEndDate = endDate ? new Date(endDate.setHours(23, 59, 59, 999)) : null;
+
     return sessions
         .filter(({ logoutTime }) => logoutTime) 
         .filter(({ loginTime }) => {
             const date = new Date(loginTime);
-            return (!startDate || date >= startDate) && (!endDate || date <= endDate);
+            return (!startDate || date >= startDate) && (!adjustedEndDate || date <= adjustedEndDate);
         })
         .filter(({ loginTime, logoutTime }) => {
             if (sessionType === "All Sessions") return true;
-
             const workMinutes = (new Date(logoutTime) - new Date(loginTime)) / (1000 * 60); 
-
             if (sessionType === "Early Logout") return workMinutes < 480; 
             if (sessionType === "OT") return workMinutes > 510; 
             if (sessionType === "Normal") return workMinutes >= 480 && workMinutes <= 510; 
-            
             return true;
         });
 };

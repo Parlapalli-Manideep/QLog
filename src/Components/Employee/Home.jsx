@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Alert } from "react-bootstrap";
-import { Mail, Shield, Clock, User, Calendar, AlertCircle } from "lucide-react";
+import { Mail, Shield, Clock, User, Calendar, Clock3 } from "lucide-react";
 import { getEmployeeLeaves } from "../../Services/Users";
 import ApplyLeave from "./ApplyLeave";
 
 const Home = ({ employee, manager }) => {
     const [showCalendar, setShowCalendar] = useState(false);
     const [existingLeaves, setExistingLeaves] = useState([]);
+    const [pendingLeaves, setPendingLeaves] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     const today = React.useMemo(() => new Date(), []);
     const currentYear = today.getFullYear().toString();
-
-    const loginSessions = employee?.LoginSessions || [];
+    const loginSessions = employee?.loginSessions || [];
     const lastSession = loginSessions.length > 0 ? loginSessions[loginSessions.length - 1] : null;
     const isActive = lastSession && !lastSession.logoutTime;
 
@@ -36,11 +36,22 @@ const Home = ({ employee, manager }) => {
                 setIsLoading(true);
                 try {
                     const leavesData = await getEmployeeLeaves(employee.id);
-                    const todayDate = today.toISOString().split('T')[0];
-                    const filteredLeaves = (leavesData[currentYear] || []).filter(
-                        date => date >= todayDate
-                    );
+                    
+                    const filteredLeaves = (leavesData || []).filter(dateStr => {
+                        const [year, month, day] = dateStr.split('-');
+                        
+                        const leaveDate = new Date(year, month - 1, day);
+                        return leaveDate > new Date(today.setHours(0, 0, 0, 0));
+                    });
                     setExistingLeaves(filteredLeaves);
+                    
+                    const pendingRequests = employee.leaveRequests || [];
+                    const filteredPendingLeaves = pendingRequests.filter(dateStr => {
+                        const [year, month, day] = dateStr.split('-');
+                        const leaveDate = new Date(year, month - 1, day);
+                        return leaveDate > new Date(today.setHours(0, 0, 0, 0));
+                    });
+                    setPendingLeaves(filteredPendingLeaves);
                 } catch (error) {
                     console.error("Error fetching leaves:", error);
                     setErrorMessage("Failed to load existing leave data.");
@@ -53,20 +64,19 @@ const Home = ({ employee, manager }) => {
         fetchLeaves();
     }, [employee?.id, currentYear, today]);
 
-    const handleLeaveApplied = (updatedLeaves, selectedDates) => {
-        setSuccessMessage("Leave successfully applied for: " + selectedDates.join(", "));
-        setExistingLeaves(updatedLeaves);
+    const handleLeaveApplied = (updatedLeaveRequests, selectedDates) => {
+        setSuccessMessage("Leave request submitted for: " + selectedDates.join(", "));
+        setPendingLeaves(updatedLeaveRequests);
         setShowCalendar(false);
 
         setTimeout(() => setSuccessMessage(""), 3000);
     };
-
     const handleCancel = () => {
         setShowCalendar(false);
     };
 
     return (
-        <div style={{ margin: "85px auto auto 75px" }}>
+        <div style={{marginLeft:"20px"}}>
             {successMessage && (
                 <Alert variant="success" className="mb-4" onClose={() => setSuccessMessage("")} dismissible>
                     {successMessage}
@@ -79,7 +89,7 @@ const Home = ({ employee, manager }) => {
                 </Alert>
             )}
 
-            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
+            <div className="p-4 shadow-sm rounded bg-white w-100 ">
                 <h5 className="fw-semibold mb-3 fw-bold text-primary">Employee Information</h5>
                 <div className="d-flex flex-wrap justify-content-center gap-3">
                     {employeeDetails.map((detail, index) => (
@@ -141,20 +151,38 @@ const Home = ({ employee, manager }) => {
                 </div>
             </div>
 
+            {pendingLeaves.length > 0 && (
+                <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
+                    <h5 className="fw-semibold mb-3 fw-bold text-warning">Pending Leave Requests</h5>
+                    <div className="d-flex flex-wrap">
+                        {pendingLeaves
+                            .sort((a, b) => {
+                                const [yearA, monthA, dayA] = a.split('-');
+                                const [yearB, monthB, dayB] = b.split('-');
+                                return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+                            })
+                            .map(date => {
+                               return( <span key={date} className="badge bg-warning text-dark me-2 mb-2 p-2">
+                                    {date}
+                                </span>)
+})}
+                    </div>
+                </div>
+            )}
+
             {existingLeaves.length > 0 && (
                 <div className="p-4 shadow-sm rounded bg-white w-100">
-                    <h5 className="fw-semibold mb-3 fw-bold text-primary">Upcoming Leave Days</h5>
+                    <h5 className="fw-semibold mb-3 fw-bold text-success">Approved Leave Days</h5>
                     <div className="d-flex flex-wrap">
                         {existingLeaves
-                            .filter(date => new Date(date) >= new Date(today.setHours(0, 0, 0, 0))) 
-                            .sort((a, b) => new Date(a) - new Date(b))
+                            .sort((a, b) => {
+                                const [yearA, monthA, dayA] = a.split('-');
+                                const [yearB, monthB, dayB] = b.split('-');
+                                return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+                            })
                             .map(date => (
-                                <span key={date} className="badge bg-primary me-2 mb-2 p-2">
-                                    {new Date(date).toLocaleDateString('en-US', {
-                                        weekday: 'short',
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })}
+                                <span key={date} className="badge bg-success me-2 mb-2 p-2">
+                                    {date}
                                 </span>
                             ))}
                     </div>

@@ -25,12 +25,8 @@ const Attendance = ({ loginSessions }) => {
         return filterSessions(loginSessions, filterDates.startDate, filterDates.endDate, sessionType).reverse();
     }, [loginSessions, filterDates, sessionType]);
 
-
-
     const totalPages = Math.ceil(filteredSessions.length / 10);
     const displayedSessions = filteredSessions.slice((currentPage - 1) * 10, currentPage * 10);
-
-
 
     const getStatusStyle = (status) => {
         switch (status) {
@@ -44,7 +40,7 @@ const Attendance = ({ loginSessions }) => {
     };
 
     return (
-        <div style={{ marginTop: "85px auto auto 75px" }} className="p-4 bg-white shadow-sm rounded">
+        <div style={{ marginLeft: "20px" }} className="p-4 bg-white shadow-sm rounded">
 
             <div className="mb-3 d-flex align-items-center justify-content-between p-3 shadow-sm"
                 style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
@@ -102,19 +98,28 @@ const Attendance = ({ loginSessions }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {displayedSessions.map(({ loginTime, logoutTime }, index) => {
-                        const status = classifySession(loginTime, logoutTime);
-                        return (
-                            <tr key={index}>
-                                <td>{formatDate(loginTime)}</td>
-                                <td>{formatTime(loginTime)}</td>
-                                <td>{formatTime(logoutTime)}</td>
-                                <td>{calculateWorkingHours(loginTime, logoutTime)}</td>
-                                <td style={getStatusStyle(status)}>{status}</td>
-                            </tr>
-                        );
-                    })}
+                    {displayedSessions.length > 0 ? (
+                        displayedSessions.map(({ loginTime, logoutTime }, index) => {
+                            const status = classifySession(loginTime, logoutTime);
+                            return (
+                                <tr key={index}>
+                                    <td>{formatDate(loginTime)}</td>
+                                    <td>{formatTime(loginTime)}</td>
+                                    <td>{logoutTime ? formatTime(logoutTime) : "—"}</td>
+                                    <td>{calculateWorkingHours(loginTime, logoutTime)}</td>
+                                    <td style={getStatusStyle(status)}>{status}</td>
+                                </tr>
+                            );
+                        })
+                    ) : (
+                        <tr>
+                            <td colSpan="5" className="text-center fw-bold text-muted">
+                                No Logins
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
+
             </Table>
 
             {totalPages > 1 && (

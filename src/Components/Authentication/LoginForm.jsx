@@ -69,7 +69,7 @@ const handleGoogleLogin = async () => {
           role:role,
           method: 'google'
         };
-      role == "manager" ? userData.staff = [] : ""
+      role == "manager" ? (userData.staff = [], userData.location = {} ): ""
       await addUser(userData);
       toast.success('Successfully logged in with Google!');
       navigate(`/${role}`,{state :{email : result.user.email,role:userData.role}});
