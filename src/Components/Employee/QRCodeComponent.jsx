@@ -14,7 +14,7 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
     const getLocation = () => {
         setIsLoading(true);
         setLocationError(false);
-        
+
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const loc = {
@@ -30,7 +30,8 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
                     location: `${loc.latitude},${loc.longitude}`,
                     timestamp: new Date().toISOString(),
                 };
-
+                console.log(` location: ${loc.latitude},${loc.longitude}`);
+                
                 const encodedString = btoa(JSON.stringify(qrData));
 
                 setEncodedData(encodedString);
@@ -48,27 +49,27 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
 
     useEffect(() => {
         if (loginSessions && loginSessions.length > 0) {
-            const sortedSessions = [...loginSessions].sort((a, b) => 
+            const sortedSessions = [...loginSessions].sort((a, b) =>
                 new Date(b.loginTime) - new Date(a.loginTime)
             );
             setLastLogin(sortedSessions[0]);
         }
-        
+
         getLocation();
     }, [employee, loginSessions]);
 
     const isActive = lastLogin && lastLogin.loginTime && !lastLogin.logoutTime;
-    
+
     const getActiveTime = () => {
         if (!isActive || !lastLogin?.loginTime) return null;
-        
+
         const loginDate = new Date(lastLogin.loginTime);
         const now = new Date();
         const diffMs = now - loginDate;
         const diffMinutes = Math.floor(diffMs / (1000 * 60));
         const hours = Math.floor(diffMinutes / 60);
         const minutes = diffMinutes % 60;
-        
+
         return `${hours}:${minutes.toString().padStart(2, '0')} hrs`;
     };
 
@@ -87,7 +88,7 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
                                 )}
                             </div>
                         </Card.Header>
-                        
+
                         <Card.Body className="text-center py-4">
                             {locationError ? (
                                 <div>
@@ -95,8 +96,8 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
                                         <MapPin size={20} className="me-2" />
                                         Location access is required to generate your QR code
                                     </Alert>
-                                    <Button 
-                                        variant="primary" 
+                                    <Button
+                                        variant="primary"
                                         onClick={getLocation}
                                         className="d-flex align-items-center mx-auto"
                                     >
@@ -113,18 +114,18 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
                                 </div>
                             ) : (
                                 <div className="qr-container py-2">
-                                    <QRCodeCanvas 
-                                        value={encodedData} 
-                                        size={220} 
-                                        level="H" 
-                                        includeMargin={true} 
+                                    <QRCodeCanvas
+                                        value={encodedData}
+                                        size={220}
+                                        level="H"
+                                        includeMargin={true}
                                         bgColor="#ffffff"
                                         fgColor="#000000"
                                     />
                                 </div>
                             )}
                         </Card.Body>
-                        
+
                         {lastLogin && !locationError && (
                             <Card.Footer className="bg-light">
                                 <Row className="text-center">
@@ -137,7 +138,7 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
                                             {lastLogin.loginTime ? formatTime(lastLogin.loginTime) : "N/A"}
                                         </div>
                                     </Col>
-                                    
+
                                     <Col xs={6}>
                                         {isActive ? (
                                             <>

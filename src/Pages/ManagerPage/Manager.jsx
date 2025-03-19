@@ -6,6 +6,8 @@ import SideBar from "../../Components/Common/Sidebar";
 import Home from "../../Components/Manager/Home";
 import Employees from "../../Components/Manager/Employees";
 import Analytics from "../../Components/Manager/Analytics";
+import Manage from "../../Components/Manager/Manage";
+import ManagerProfile from "../../Components/Manager/managerProfile";
 
 function Manager() {
     const location = useLocation();
@@ -44,9 +46,9 @@ function Manager() {
                 <div className="container mt-5">
                     {activeComponent === "home" && <Home manager={manager}/>}
                     {activeComponent === "employees" && <Employees staff={manager.staff} /> }
+                    {activeComponent === "manage" && <Manage managerId = {manager.id} staff = {manager.staff}/>}
                     {activeComponent === "analytics" && <Analytics manager={manager}/>}
-                    {activeComponent === "schedule" && <h2>Schedule Content</h2>}
-                    {activeComponent === "settings" && <h2>Settings Content</h2>}
+                    {activeComponent === "profile" && <ManagerProfile manager={manager}/>}
                 </div>
             </div>
         </div>

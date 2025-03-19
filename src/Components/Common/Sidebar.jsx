@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Home, BarChart, CalendarCheck, Users, Settings, QrCode, User } from "lucide-react";
+import { Home, BarChart, CalendarCheck, Users, Settings, QrCode, User, UserPen } from "lucide-react";
 
 const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent, role }) => {
     const [activeItem, setActiveItem] = useState("home");
@@ -13,9 +13,9 @@ const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent, 
     const menuItems = role === "manager" ? [
         { name: "home", label: "Home", icon: <Home size={24} /> },
         { name: "employees", label: "Employees", icon: <Users size={24} /> },
+        { name: "manage", label: "Manage", icon: <Settings size={24} /> },
         { name: "analytics", label: "Analytics", icon: <BarChart size={24} /> },
-        { name: "schedule", label: "Schedule", icon: <CalendarCheck size={24} /> },
-        { name: "settings", label: "Settings", icon: <Settings size={24} /> },
+        { name: "profile", label: "Profile", icon: <User size={24} /> },
     ] : [
         { name: "home", label: "Home", icon: <Home size={24} /> },
         { name: "attendance", label: "Attendance", icon: <CalendarCheck size={24} /> },

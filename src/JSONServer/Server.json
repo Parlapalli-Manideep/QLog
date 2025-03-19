@@ -74,12 +74,11 @@
         },
         {
           "loginTime": "2025-03-18T00:00:00+05:30",
-          "logoutTime": "2025-03-18T02:00:00+05:30"
+          "logoutTime": null
         }
       ],
       "leaveRequests": [
-        "2025-03-26",
-        "2025-03-29"
+        "2025-03-26"
       ],
       "leaves": [
         "2025-02-28",
@@ -87,7 +86,8 @@
         "2025-03-14",
         "2025-03-25",
         "2025-03-22",
-        "2025-03-27"
+        "2025-03-27",
+        "2025-03-29"
       ]
     },
     {
@@ -212,40 +212,6 @@
       ],
       "leaveRequests": [],
       "leaves": []
-    },
-    {
-      "id": "1742268793918",
-      "name": "sachin",
-      "email": "sachin@gmail.com",
-      "password": "Sach@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934875",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-18T07:30:00+05:30",
-          "logoutTime": "2025-03-18T16:30:00+05:30"
-        }
-      ],
-      "leaveRequests": [],
-      "leaves": []
-    },
-    {
-      "id": "1742268793919",
-      "name": "praveen",
-      "email": "praveen@gmail.com",
-      "password": "Pra@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934875",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-18T12:30:00+05:30",
-          "logoutTime": "2025-03-18T20:30:00+05:30"
-        }
-      ],
-      "leaveRequests": [],
-      "leaves": []
     }
   ],
   "manager": [
@@ -263,14 +229,12 @@
         "1742268793914",
         "1742268793915",
         "1742268793916",
-        "1742268793917",
-        "1742268793918",
-        "1742268793919"
+        "1742268793917"
       ],
       "location": {
-        "latitude": 17.384486736741806,
-        "longitude": 78.50314233319318,
-        "radius": 100
+        "latitude": 17.37219981675304,
+        "longitude": 78.45236497166411,
+        "radius": 250
       }
     }
   ]

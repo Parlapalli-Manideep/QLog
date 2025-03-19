@@ -11,7 +11,8 @@ const Home = ({ manager }) => {
   const [message, setMessage] = useState({ text: "", type: "" });
   const [activeEmployees, setActiveEmployees] = useState(0);
   const [employeesOnLeave, setEmployeesOnLeave] = useState(0);
-
+  console.log(manager.location);
+  
   useEffect(() => {
     if (manager?.staff && Array.isArray(manager.staff)) {
       fetchEmployeeData();
@@ -171,7 +172,7 @@ const Home = ({ manager }) => {
       </div>
 
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Select Location</Modal.Title>
         </Modal.Header>
         <Modal.Body>

@@ -22,7 +22,7 @@ const LeaveRequestsModal = ({ show, onHide, employee, onLeaveAction }) => {
             centered
             className="leave-request-modal"
         >
-            <Modal.Header closeButton className="bg-primary text-white">
+            <Modal.Header className="bg-primary text-white">
                 <Modal.Title>
                     <Calendar size={20} className="me-2" />
                     Leave Requests

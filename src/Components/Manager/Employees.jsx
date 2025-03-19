@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import { getUserById, updateUser } from "../../Services/Users";
 import { Table, Button, Form, Card, Pagination, Badge } from "react-bootstrap";
-import { UserCheck, UserX, Eye, ArrowLeft, User, Mail, Calendar } from "lucide-react";
-import Profile from "../Employee/Profile";
+import { UserCheck, UserX, Eye, ArrowLeft, Calendar } from "lucide-react";
 import Attendance from "../Employee/Attendance";
 import LeaveRequestsModal from "../Modals/LeaveRequestModal";
 
-const Employees = ({ staff }) => {
+const EmployeeManagement = ({ staff }) => {
     const [employees, setEmployees] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filter, setFilter] = useState("all");
     const [leaveFilter, setLeaveFilter] = useState("all");
-    const [selectedProfile, setSelectedProfile] = useState(null);
     const [selectedAttendance, setSelectedAttendance] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -37,27 +35,21 @@ const Employees = ({ staff }) => {
         try {
             const updatedEmployee = { ...selectedEmployee };
             
-            // Remove the date from leaveRequests
             updatedEmployee.leaveRequests = updatedEmployee.leaveRequests.filter(d => d !== date);
             
-            // If approved, add to leaves array
             if (action === "approve") {
                 updatedEmployee.leaves = [...(updatedEmployee.leaves || []), date];
             }
             
-            // Update the employee data
             await updateUser(selectedEmployee.email, selectedEmployee.role, {
                 leaveRequests: updatedEmployee.leaveRequests,
                 leaves: updatedEmployee.leaves
             });
             
-            // Update local state
             setSelectedEmployee(updatedEmployee);
             
-            // Refresh the employee list
             fetchEmployees();
             
-            // If no more leave requests, close the modal
             if (updatedEmployee.leaveRequests.length === 0) {
                 setShowLeaveModal(false);
             }
@@ -67,22 +59,23 @@ const Employees = ({ staff }) => {
     };
 
     const filteredEmployees = employees.filter(emp => {
-        const nameMatch = emp.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const searchMatch = 
+            emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            emp.id.toString().includes(searchQuery);
+            
         const lastSession = emp?.loginSessions?.[emp.loginSessions.length - 1];
         const isActive = lastSession?.loginTime?.startsWith(new Date().toISOString().split("T")[0]) && !lastSession?.logoutTime;
         const hasLeaveRequests = emp.leaveRequests && emp.leaveRequests.length > 0;
         
-        // Status filter (active/inactive)
         let statusMatch = true;
         if (filter === "active") statusMatch = isActive;
         if (filter === "inactive") statusMatch = !isActive;
         
-        // Leave requests filter
         let leaveMatch = true;
         if (leaveFilter === "requests") leaveMatch = hasLeaveRequests;
         if (leaveFilter === "no-requests") leaveMatch = !hasLeaveRequests;
         
-        return nameMatch && statusMatch && leaveMatch;
+        return searchMatch && statusMatch && leaveMatch;
     });
 
     const indexOfLastEmployee = currentPage * employeesPerPage;
@@ -92,7 +85,6 @@ const Employees = ({ staff }) => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleBack = () => {
-        setSelectedProfile(null);
         setSelectedAttendance(null);
     };
 
@@ -101,29 +93,50 @@ const Employees = ({ staff }) => {
         setShowLeaveModal(true);
     };
 
+    const backButtonStyle = {
+        transition: "all 0.3s ease",
+        backgroundColor: "#f8f9fa",
+        border: "1px solid #dee2e6",
+        borderRadius: "4px",
+        padding: "8px 16px",
+        fontWeight: "500",
+        display: "flex",
+        alignItems: "center",
+        cursor: "pointer"
+    };
+
     return (
         <div className="container" style={{ marginLeft: "20px" }}>
-            {/* Back button - always visible */}
-            <div className="d-flex justify-content-start mb-3">
-                <Button 
-                    variant="success"
-                    onClick={handleBack} 
-                    className="shadow-sm" 
-                    style={{ display: selectedProfile || selectedAttendance ? "block" : "none" }}
-                >
-                    <ArrowLeft size={18} className="me-2" /> Back
-                </Button>
-            </div>
-
-            {selectedProfile && (
-                <Profile employee={selectedProfile} />
-            )}
-
-            {selectedAttendance && (
-                <Attendance loginSessions={selectedAttendance} />
-            )}
-
-            {!selectedProfile && !selectedAttendance && (
+            {selectedAttendance ? (
+                <>
+                    <div className="mb-4 mt-2">
+                        <button 
+                            className="btn btn-light shadow-sm"
+                            onClick={handleBack}
+                            style={backButtonStyle}
+                            onMouseOver={(e) => {
+                                e.currentTarget.style.backgroundColor = "#e9ecef";
+                                e.currentTarget.style.borderColor = "#ced4da";
+                            }}
+                            onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor = "#f8f9fa";
+                                e.currentTarget.style.borderColor = "#dee2e6";
+                            }}
+                            onMouseDown={(e) => {
+                                e.currentTarget.style.backgroundColor = "#dde0e3";
+                                e.currentTarget.style.transform = "scale(0.98)";
+                            }}
+                            onMouseUp={(e) => {
+                                e.currentTarget.style.backgroundColor = "#e9ecef";
+                                e.currentTarget.style.transform = "scale(1)";
+                            }}
+                        >
+                            <ArrowLeft size={18} className="me-2" /> Back to Employees
+                        </button>
+                    </div>
+                    <Attendance loginSessions={selectedAttendance} />
+                </>
+            ) : (
                 <Card className="p-3 mb-3 shadow-sm">
                     <h3 className="mb-4 text-primary text-center fw-bold" style={{ fontFamily: "Arial, sans-serif" }}>
                         EMPLOYEES LIST
@@ -133,7 +146,7 @@ const Employees = ({ staff }) => {
                         <div className="flex-grow-1" style={{ minWidth: "150px" }}>
                             <Form.Control
                                 type="text"
-                                placeholder="Search by name..."
+                                placeholder="Search by name or employee ID..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="border-primary w-100"
@@ -174,7 +187,6 @@ const Employees = ({ staff }) => {
                                     <th>EMAIL</th>
                                     <th>STATUS</th>
                                     <th>ATTENDANCE</th>
-                                    <th>PROFILE</th>
                                     <th>LEAVES</th>
                                 </tr>
                             </thead>
@@ -191,7 +203,7 @@ const Employees = ({ staff }) => {
                                                 <td className="text-uppercase">{emp.name}</td>
                                                 <td>
                                                     <a href={`mailto:${emp.email}`} className="text-primary fw-bold text-decoration-none">
-                                                        <Mail size={16} className="me-1" /> {emp.email}
+                                                        {emp.email}
                                                     </a>
                                                 </td>
                                                 <td className={isActive ? "text-success fw-bold" : "text-danger fw-bold"}>
@@ -201,11 +213,6 @@ const Employees = ({ staff }) => {
                                                 <td>
                                                     <Button variant="warning" className="text-dark fw-bold shadow-sm" onClick={() => setSelectedAttendance(emp.loginSessions)}>
                                                         <Eye size={16} className="me-1" /> Attendance
-                                                    </Button>
-                                                </td>
-                                                <td>
-                                                    <Button variant="info" className="text-white fw-bold shadow-sm" onClick={() => setSelectedProfile(emp)}>
-                                                        <User size={16} className="me-1" /> Profile
                                                     </Button>
                                                 </td>
                                                 <td>
@@ -228,7 +235,7 @@ const Employees = ({ staff }) => {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="7" className="text-center text-muted fw-bold">
+                                        <td colSpan="6" className="text-center text-muted fw-bold">
                                             No Employees Found
                                         </td>
                                     </tr>
@@ -249,7 +256,6 @@ const Employees = ({ staff }) => {
                 </Card>
             )}
 
-            {/* Leave Requests Modal - now using the separate component */}
             <LeaveRequestsModal
                 show={showLeaveModal}
                 onHide={() => setShowLeaveModal(false)}
@@ -260,4 +266,4 @@ const Employees = ({ staff }) => {
     );
 };
 
-export default Employees;
+export default EmployeeManagement;
