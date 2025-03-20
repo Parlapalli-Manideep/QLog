@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/";
+export const BASE_URL = "http://localhost:3000/";
 
 export const getEmployees = async () => {
   const employee = await axios.get(`${BASE_URL}employee`);

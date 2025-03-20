@@ -11,12 +11,12 @@ const Home = ({ manager }) => {
   const [message, setMessage] = useState({ text: "", type: "" });
   const [activeEmployees, setActiveEmployees] = useState(0);
   const [employeesOnLeave, setEmployeesOnLeave] = useState(0);
-  console.log(manager.location);
   
   useEffect(() => {
     if (manager?.staff && Array.isArray(manager.staff)) {
       fetchEmployeeData();
     }
+    setLocation(manager?.location || { latitude: 17.3850, longitude: 78.4867, radius: "" });
   }, [manager]);
 
 

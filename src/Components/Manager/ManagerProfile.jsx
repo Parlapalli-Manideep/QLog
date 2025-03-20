@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import QRCodeScanner from "../../Pages/Scanner/QRScanner";
+import { updateUser } from "../../Services/Users";
 
 const ManagerProfile = ({ manager }) => {
     const defaultProfile = {
@@ -9,21 +9,18 @@ const ManagerProfile = ({ manager }) => {
         bio: "",
     };
 
-    const storedProfile = localStorage.getItem(manager.id);
+    const storedProfile = localStorage.getItem(`manager_${manager.id}`);
     const parsedProfile = storedProfile ? JSON.parse(storedProfile) : {};
     const [profile, setProfile] = useState({ ...defaultProfile, ...manager, ...parsedProfile });
     const [editing, setEditing] = useState(false);
-    const [scanning, setScanning] = useState(false);
     const [tempProfile, setTempProfile] = useState({});
 
     useEffect(() => {
         if (manager.id) {
             localStorage.setItem(
-                `${manager.id}`,
+                `manager_${manager.id}`,
                 JSON.stringify({
-                    profilePic: profile.profilePic,
-                    phone: profile.phone,
-                    bio: profile.bio,
+                    profilePic: profile.profilePic
                 })
             );
         }
@@ -44,9 +41,21 @@ const ManagerProfile = ({ manager }) => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setProfile({ ...profile, ...tempProfile });
+        const updatedProfile = { ...profile, ...tempProfile };
+
+        localStorage.setItem(
+            `manager_${manager.id}`,
+            JSON.stringify({ profilePic: updatedProfile.profilePic })
+        );
+
+        await updateUser(manager.email, "manager", {
+            phone: updatedProfile.phone,
+            bio: updatedProfile.bio,
+        });
+
+        setProfile(updatedProfile);
         setEditing(false);
     };
 
@@ -104,9 +113,6 @@ const ManagerProfile = ({ manager }) => {
                 <button onClick={() => setEditing(true)} className="btn btn-dark btn-sm">
                     Edit Profile
                 </button>
-                <button onClick={() => setScanning(true)} className="btn btn-primary btn-sm ms-2">
-                    Scan QR Code
-                </button>
             </div>
 
             {editing && (
@@ -158,19 +164,6 @@ const ManagerProfile = ({ manager }) => {
                             </button>
                         </div>
                     </form>
-                </div>
-            )}
-
-            {scanning && (
-                <div className="position-fixed top-50 start-50 translate-middle bg-white p-4 rounded shadow" style={{ zIndex: 20, width: "400px" }}>
-                    <h5 className="text-center fw-bold mb-3">QR Code Scanner</h5>
-                    {scanning && <QRCodeScanner onClose={() => setScanning(false)} />}
-
-                    <div className="text-center mt-3">
-                        <button onClick={() => setScanning(false)} className="btn btn-danger btn-sm">
-                            Close Scanner
-                        </button>
-                    </div>
                 </div>
             )}
         </div>

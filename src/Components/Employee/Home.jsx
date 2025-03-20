@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Alert } from "react-bootstrap";
-import { Mail, Shield, Clock, User, Calendar, Clock3 } from "lucide-react";
+import { Card, Button, Alert, Modal } from "react-bootstrap";
+import { Mail, Shield, Clock, User, Calendar, Clock3, QrCode } from "lucide-react";
 import { getEmployeeLeaves } from "../../Services/Users";
 import ApplyLeave from "./ApplyLeave";
+import QRCodeScanner from "../../Pages/Scanner/QRScanner"; 
 
 const Home = ({ employee, manager }) => {
     const [showCalendar, setShowCalendar] = useState(false);
+    const [showQRScanner, setShowQRScanner] = useState(false);
     const [existingLeaves, setExistingLeaves] = useState([]);
     const [pendingLeaves, setPendingLeaves] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -71,8 +73,13 @@ const Home = ({ employee, manager }) => {
 
         setTimeout(() => setSuccessMessage(""), 3000);
     };
+    
     const handleCancel = () => {
         setShowCalendar(false);
+    };
+    
+    const handleQRScannerClose = () => {
+        setShowQRScanner(false);
     };
 
     return (
@@ -89,7 +96,7 @@ const Home = ({ employee, manager }) => {
                 </Alert>
             )}
 
-            <div className="p-4 shadow-sm rounded bg-white w-100 ">
+            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
                 <h5 className="fw-semibold mb-3 fw-bold text-primary">Employee Information</h5>
                 <div className="d-flex flex-wrap justify-content-center gap-3">
                     {employeeDetails.map((detail, index) => (
@@ -119,6 +126,25 @@ const Home = ({ employee, manager }) => {
                     <div className="p-3 shadow-sm rounded bg-light flex-grow-1">
                         <p className="text-muted mb-1">Contact</p>
                         <p><a href={`mailto:${manager?.email}`} className="text-primary fw-bold text-decoration-none">{manager?.email || "N/A"}</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
+                <div className="d-flex align-items-center mb-3">
+                    <QrCode className="me-2 text-primary" size={24} />
+                    <h5 className="fw-semibold mb-0 fw-bold text-primary">Mark Attendance</h5>
+                </div>
+
+                <div className="p-3 shadow-sm rounded bg-light">
+                    <div className="text-center">
+                        <Button
+                            variant="primary"
+                            onClick={() => setShowQRScanner(true)}
+                            className="px-4"
+                        >
+                            Scan QR Code
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -189,6 +215,29 @@ const Home = ({ employee, manager }) => {
                 </div>
             )}
 
+            <Modal 
+                show={showQRScanner} 
+                onHide={handleQRScannerClose}
+                centered
+                backdrop="static"
+                size="lg"
+                contentClassName="bg-transparent border-0"
+            >
+                <Modal.Body className="p-0">
+                    <div className="position-relative">
+                        <div className="bg-white p-4 rounded shadow">
+                            <button 
+                                type="button" 
+                                className="btn-close position-absolute" 
+                                style={{ top: "15px", right: "15px" }} 
+                                onClick={handleQRScannerClose}
+                                aria-label="Close"
+                            ></button>
+                            <QRCodeScanner />
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

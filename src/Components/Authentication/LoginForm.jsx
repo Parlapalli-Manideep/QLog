@@ -4,12 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Mail, Lock } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
 import {checkUserExists, addUser,checkGoogleCredentials, checkCredentials } from '../../Services/Users'
 import { AuthLayout } from './AuthenticationLayout';
+import { toast } from 'react-toastify';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { updateUser } from "../../Services/Users";
 
 const ProfilePage = ({ employee }) => {
     const defaultProfile = {
@@ -9,7 +10,7 @@ const ProfilePage = ({ employee }) => {
         phone: "",
     };
 
-    const storedProfile = localStorage.getItem(`${employee.id}`);
+    const storedProfile = localStorage.getItem(`employee_${employee.id}`);
     const parsedProfile = storedProfile ? JSON.parse(storedProfile) : {};
     const [profile, setProfile] = useState({ ...defaultProfile, ...employee, ...parsedProfile });
     const [editing, setEditing] = useState(false);
@@ -18,29 +19,22 @@ const ProfilePage = ({ employee }) => {
     useEffect(() => {
         if (employee.id) {
             localStorage.setItem(
-                `${employee.id}`,
+                `employee_${employee.id}`,
                 JSON.stringify({
-                    profilePic: profile.profilePic,
-                    location: profile.location,
-                    jobTitle: profile.jobTitle,
-                    phone: profile.phone,
+                    profilePic: profile.profilePic, 
                 })
             );
         }
-    }, [profile]);
+    }, [profile,employee]);
 
     const handleChange = (e) => {
         setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
     };
-
     const loginDate = employee?.loginSessions?.[0]?.loginTime
     ? new Date(employee.loginSessions[0].loginTime).toLocaleDateString("en-GB", {
         timeZone: "Asia/Kolkata"
     })
     : "N/A";
-
-
-
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -52,9 +46,22 @@ const ProfilePage = ({ employee }) => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setProfile({ ...profile, ...tempProfile });
+        const updatedProfile = { ...profile, ...tempProfile };
+
+        localStorage.setItem(
+            `employee_${employee.id}`,
+            JSON.stringify({ profilePic: updatedProfile.profilePic })
+        );
+
+        await updateUser(employee.email, "employee", {
+            location: updatedProfile.location,
+            jobTitle: updatedProfile.jobTitle,
+            phone: updatedProfile.phone,
+        });
+
+        setProfile(updatedProfile);
         setEditing(false);
     };
 
@@ -64,7 +71,7 @@ const ProfilePage = ({ employee }) => {
     };
 
     return (
-        <div className="container position-relative" style={{marginLeft:"20px"}}>
+        <div className="container position-relative" style={{ marginLeft: "20px" }}>
             {editing && (
                 <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 backdrop-blur" style={{ zIndex: 10 }}></div>
             )}

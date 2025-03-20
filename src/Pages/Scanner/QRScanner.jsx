@@ -1,22 +1,29 @@
 import { useState, useEffect } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode/esm/html5-qrcode-scanner";
-import { getManagers, getUserById } from "../../Services/Users";
+import { BASE_URL, getManagers, getUserById } from "../../Services/Users";
 import axios from "axios";
-
-const BASE_URL = "http://localhost:3000/";
 
 const QRCodeScanner = () => {
     const [status, setStatus] = useState("");
 
     useEffect(() => {
-        const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+    const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
 
-        scanner.render(handleScan, handleError);
+    scanner.render(handleScan, handleError);
 
-        return () => {
-            scanner.clear();
-        };
-    }, []);
+    return () => {
+        scanner.clear(); 
+        stopCamera();  
+    };
+}, []);
+
+const stopCamera = () => {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+            stream.getTracks().forEach(track => track.stop());
+        })
+        .catch((err) => console.error("Error stopping camera:", err));
+};
 
     const isWithinRange = (empLat, empLng, managerLat, managerLng, radius) => {
         const toRad = (value) => (value * Math.PI) / 180;
@@ -38,8 +45,7 @@ const QRCodeScanner = () => {
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         const distance = earthRadius * c;
     
-        console.log(`Calculated Distance: ${distance.toFixed(2)} meters`);
-        console.log(`Threshold Radius: ${radius} meters`);
+        
     
         return distance <= radius;
     };

@@ -4,13 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
 import { PasswordStrength } from './PasswordStrength';
 import { addUser, checkUserExists,checkGoogleCredentials } from '../../Services/Users';
 import { AuthLayout } from './AuthenticationLayout';
+import { toast } from 'react-toastify';
 
 const signupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
