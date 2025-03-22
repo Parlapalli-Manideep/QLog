@@ -1,30 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { updateUser } from "../../Services/Users";
+import { getUserById, updateUser } from "../../Services/Users";
+import { useLocation } from "react-router-dom";
+import defaultProfilePic from "../../Assets/defaultProfilePic.jpg"; 
 
-const ManagerProfile = ({ manager }) => {
+const ManagerProfile = () => {
+    const id = useLocation().state?.id;
+    const [manager, setManager] = useState({});
     const defaultProfile = {
-        profilePic: "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg",
+        profilePic: defaultProfilePic,    
         phone: "",
         bio: "",
     };
-
     const storedProfile = localStorage.getItem(`manager_${manager.id}`);
     const parsedProfile = storedProfile ? JSON.parse(storedProfile) : {};
     const [profile, setProfile] = useState({ ...defaultProfile, ...manager, ...parsedProfile });
     const [editing, setEditing] = useState(false);
     const [tempProfile, setTempProfile] = useState({});
-
     useEffect(() => {
-        if (manager.id) {
-            localStorage.setItem(
-                `manager_${manager.id}`,
-                JSON.stringify({
-                    profilePic: profile.profilePic
-                })
-            );
-        }
-    }, [profile]);
+        const fetchData = async () => {
+            const data = await getUserById(id, "manager");
+            setManager(data);
+        };
+        fetchData();
+        
+    }, [id,storedProfile]);
+    useEffect(() => {
+        const storedProfile1 = localStorage.getItem(`manager_${manager.id}`);
+            const parsedProfile1 = storedProfile ? JSON.parse(storedProfile1) : {};
+            setProfile({ ...defaultProfile,...parsedProfile1,...manager, });
+    }, [manager]);
+         
 
     const handleChange = (e) => {
         setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
@@ -89,22 +95,22 @@ const ManagerProfile = ({ manager }) => {
                         <h5 className="fw-bold">Personal Information</h5>
                         <p>📍 Location:</p>
                         <ul>
-                            <li><strong>Latitude:</strong> {profile.location.latitude}</li>
-                            <li><strong>Longitude:</strong> {profile.location.longitude}</li>
-                            <li><strong>Radius:</strong> {profile.location.radius}m</li>
+                            <li><strong>Latitude:</strong> {profile?.location?.latitude}</li>
+                            <li><strong>Longitude:</strong> {profile?.location?.longitude}</li>
+                            <li><strong>Radius:</strong> {profile?.location?.radius}m</li>
                         </ul>
-                        <p>📞 {profile.phone || "Not Updated"}</p>
-                        <p>📝 {profile.bio || "Not Updated"}</p>
+                        <p>📞 {profile?.phone || "Not Updated"}</p>
+                        <p>📝 {profile?.bio || "Not Updated"}</p>
                     </div>
                 </div>
 
                 <div className="col-md-6">
                     <div className="p-3 shadow-sm rounded bg-light h-100">
                         <h5 className="fw-bold">Work Information</h5>
-                        <p><strong>Manager ID:</strong> {profile.id || "N/A"}</p>
-                        <p><strong>Email:</strong> {profile.email || "N/A"}</p>
-                        <p><strong>Authentication Method:</strong> {profile.method || "N/A"}</p>
-                        <p><strong>Staff Count:</strong> {profile.staff.length}</p>
+                        <p><strong>Manager ID:</strong> {profile?.id || "N/A"}</p>
+                        <p><strong>Email:</strong> {profile?.email || "N/A"}</p>
+                        <p><strong>Authentication Method:</strong> {profile?.method || "N/A"}</p>
+                        <p><strong>Staff Count:</strong> {profile?.staff?.length}</p>
                     </div>
                 </div>
             </div>

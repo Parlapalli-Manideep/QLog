@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Alert, Modal } from "react-bootstrap";
-import { Mail, Shield, Clock, User, Calendar, Clock3, QrCode } from "lucide-react";
-import { getEmployeeLeaves } from "../../Services/Users";
+import { Mail, Shield, Clock, User, Calendar, QrCode } from "lucide-react";
+import { getEmployeeLeaves, getUserById } from "../../Services/Users";
 import ApplyLeave from "./ApplyLeave";
-import QRCodeScanner from "../../Pages/Scanner/QRScanner"; 
+import QRCodeScanner from "../../Pages/Scanner/QRScanner";
+import { useLocation } from "react-router-dom";
 
-const Home = ({ employee, manager }) => {
-    const [showCalendar, setShowCalendar] = useState(false);
+const EmployeeHome = () => {
+
+    const location = useLocation();
+    const [employee, setEmployee] = useState(null);
+    const [manager, setManager] = useState(null);
     const [showQRScanner, setShowQRScanner] = useState(false);
+    useEffect(() => {
+        const fetchEmployee = async () => {
+            const employeeData = await getUserById(location.state.id, "employee");
+            setEmployee(employeeData);
+        };
+        fetchEmployee();
+        const fetchManager = async () => {
+            const managerData = await getUserById(employee?.managerId, "manager");
+            setManager(managerData);
+        };
+        fetchManager();
+    }, [location.state.id, employee?.managerId,showQRScanner]);
+    const [showCalendar, setShowCalendar] = useState(false);
     const [existingLeaves, setExistingLeaves] = useState([]);
     const [pendingLeaves, setPendingLeaves] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -21,9 +38,9 @@ const Home = ({ employee, manager }) => {
     const isActive = lastSession && !lastSession.logoutTime;
 
     const employeeDetails = [
-        { label: "Employee ID", value: employee.id, icon: <User size={24} className="text-primary me-2" /> },
-        { label: "Email", value: employee.email, icon: <Mail size={24} className="text-success me-2" /> },
-        { label: "Role", value: employee.role, icon: <Shield size={24} className="text-purple me-2" /> },
+        { label: "Employee ID", value: employee?.id, icon: <User size={24} className="text-primary me-2" /> },
+        { label: "Email", value: employee?.email, icon: <Mail size={24} className="text-success me-2" /> },
+        { label: "Role", value: employee?.role, icon: <Shield size={24} className="text-purple me-2" /> },
         {
             label: "Status",
             value: isActive ? "Active" : "Inactive",
@@ -38,15 +55,15 @@ const Home = ({ employee, manager }) => {
                 setIsLoading(true);
                 try {
                     const leavesData = await getEmployeeLeaves(employee.id);
-                    
+
                     const filteredLeaves = (leavesData || []).filter(dateStr => {
                         const [year, month, day] = dateStr.split('-');
-                        
+
                         const leaveDate = new Date(year, month - 1, day);
                         return leaveDate > new Date(today.setHours(0, 0, 0, 0));
                     });
                     setExistingLeaves(filteredLeaves);
-                    
+
                     const pendingRequests = employee.leaveRequests || [];
                     const filteredPendingLeaves = pendingRequests.filter(dateStr => {
                         const [year, month, day] = dateStr.split('-');
@@ -73,17 +90,18 @@ const Home = ({ employee, manager }) => {
 
         setTimeout(() => setSuccessMessage(""), 3000);
     };
-    
+
     const handleCancel = () => {
         setShowCalendar(false);
     };
-    
+
     const handleQRScannerClose = () => {
         setShowQRScanner(false);
+
     };
 
     return (
-        <div style={{marginLeft:"20px"}}>
+        <div style={{ marginLeft: "20px" }}>
             {successMessage && (
                 <Alert variant="success" className="mb-4" onClose={() => setSuccessMessage("")} dismissible>
                     {successMessage}
@@ -188,10 +206,10 @@ const Home = ({ employee, manager }) => {
                                 return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
                             })
                             .map(date => {
-                               return( <span key={date} className="badge bg-warning text-dark me-2 mb-2 p-2">
+                                return (<span key={date} className="badge bg-warning text-dark me-2 mb-2 p-2">
                                     {date}
                                 </span>)
-})}
+                            })}
                     </div>
                 </div>
             )}
@@ -215,8 +233,8 @@ const Home = ({ employee, manager }) => {
                 </div>
             )}
 
-            <Modal 
-                show={showQRScanner} 
+            <Modal
+                show={showQRScanner}
                 onHide={handleQRScannerClose}
                 centered
                 backdrop="static"
@@ -226,10 +244,10 @@ const Home = ({ employee, manager }) => {
                 <Modal.Body className="p-0">
                     <div className="position-relative">
                         <div className="bg-white p-4 rounded shadow">
-                            <button 
-                                type="button" 
-                                className="btn-close position-absolute" 
-                                style={{ top: "15px", right: "15px" }} 
+                            <button
+                                type="button"
+                                className="btn-close position-absolute"
+                                style={{ top: "15px", right: "15px" }}
                                 onClick={handleQRScannerClose}
                                 aria-label="Close"
                             ></button>
@@ -241,5 +259,4 @@ const Home = ({ employee, manager }) => {
         </div>
     );
 };
-
-export default Home;
+export default EmployeeHome;

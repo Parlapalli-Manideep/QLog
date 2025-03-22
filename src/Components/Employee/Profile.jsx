@@ -1,40 +1,53 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { updateUser } from "../../Services/Users";
+import { getUserById, updateUser } from "../../Services/Users";
+import { useLocation } from "react-router-dom";
+import profilePic from "../../Assets/defaultProfilePic.jpg";
 
-const ProfilePage = ({ employee }) => {
+const ProfilePage = ({employeeId}) => {
+    const [employee, setEmployee] = useState(null);
+    const state = useLocation().state;
+    
+    const storedProfile = localStorage.getItem(`employee_${employee?.id}`);
+    const parsedProfile = storedProfile ? JSON.parse(storedProfile) : {};
     const defaultProfile = {
-        profilePic: "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg",
+        profilePic: profilePic,
         location: "",
         jobTitle: "",
         phone: "",
     };
-
-    const storedProfile = localStorage.getItem(`employee_${employee.id}`);
-    const parsedProfile = storedProfile ? JSON.parse(storedProfile) : {};
-    const [profile, setProfile] = useState({ ...defaultProfile, ...employee, ...parsedProfile });
+    const [profile, setProfile] = useState({ ...defaultProfile, ...parsedProfile,...employee });
     const [editing, setEditing] = useState(false);
     const [tempProfile, setTempProfile] = useState({});
-
     useEffect(() => {
-        if (employee.id) {
-            localStorage.setItem(
-                `employee_${employee.id}`,
-                JSON.stringify({
-                    profilePic: profile.profilePic, 
-                })
-            );
+        const fetchEmployee = async () => {
+            if (!state.id) return;
+            if(employeeId){
+                const employeedata = await getUserById(employeeId, "employee");
+                setEmployee(employeedata)
+                const photo = localStorage.getItem(`employee_${employee?.id}`);
+                const Profile = storedProfile ? JSON.parse(photo) : {};
+                setProfile({...defaultProfile, ...Profile, ...employeedata });
+            }
+            else{
+                const employeedata = await getUserById(state.id, "employee");
+                setEmployee(employeedata)
+                const photo = localStorage?.getItem(`employee_${employee?.id}`);
+                const Profile = storedProfile ? JSON.parse(photo) : {};
+                setProfile({...defaultProfile, ...Profile, ...employeedata });
+            }
+            
         }
-    }, [profile,employee]);
-
+        fetchEmployee();
+    }, [state.id,storedProfile]);
     const handleChange = (e) => {
         setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
     };
     const loginDate = employee?.loginSessions?.[0]?.loginTime
-    ? new Date(employee.loginSessions[0].loginTime).toLocaleDateString("en-GB", {
-        timeZone: "Asia/Kolkata"
-    })
-    : "N/A";
+        ? new Date(employee.loginSessions[0].loginTime).toLocaleDateString("en-GB", {
+            timeZone: "Asia/Kolkata"
+        })
+        : "N/A";
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -86,7 +99,7 @@ const ProfilePage = ({ employee }) => {
 
             <div className="text-center mt-3">
                 <h4 className="fw-bold">{profile.name?.toUpperCase() || "Employee Name"}</h4>
-                <p className="text-muted">{employee.role || "Role Not Assigned"}</p>
+                <p className="text-muted">{employee?.role || "Role Not Assigned"}</p>
             </div>
 
             <div className="row mt-4">
@@ -110,11 +123,11 @@ const ProfilePage = ({ employee }) => {
                 </div>
             </div>
 
-            <div className="text-center mt-3">
+           {!(employeeId==undefined) || <div className="text-center mt-3">
                 <button onClick={() => setEditing(true)} className="btn btn-dark btn-sm">
                     Edit Profile
                 </button>
-            </div>
+            </div>}
 
             {editing && (
                 <div className="position-fixed top-50 start-50 translate-middle bg-white p-4 rounded shadow" style={{ zIndex: 20, width: "350px" }}>

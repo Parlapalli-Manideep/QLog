@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { getUserById, updateUser } from "../../Services/Users";
 import { Table, Button, Form, Card, Pagination, Badge } from "react-bootstrap";
 import { UserCheck, UserX, Eye, ArrowLeft, Calendar } from "lucide-react";
 import Attendance from "../Employee/Attendance";
 import LeaveRequestsModal from "../Modals/LeaveRequestModal";
+import { useLocation } from "react-router-dom";
 
-const EmployeeManagement = ({ staff }) => {
+const EmployeeManagement = () => {
+    const [staff, setStaff] = useState([]);
+    const id=useLocation().state?.id;
     const [employees, setEmployees] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filter, setFilter] = useState("all");
@@ -15,7 +18,17 @@ const EmployeeManagement = ({ staff }) => {
     const [showLeaveModal, setShowLeaveModal] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const employeesPerPage = 8;
-
+useEffect(() => {
+    const fetchStaff = async () => {
+        try {
+            const employee = await getUserById(id, "manager");
+            setStaff(employee.staff);
+        } catch (error) {
+            console.error("Error fetching staff:", error);
+        }
+    };
+    fetchStaff();
+}, [id]);
     useEffect(() => {
         if (Array.isArray(staff) && staff.length > 0) {
             fetchEmployees();
@@ -134,7 +147,7 @@ const EmployeeManagement = ({ staff }) => {
                             <ArrowLeft size={18} className="me-2" /> Back to Employees
                         </button>
                     </div>
-                    <Attendance loginSessions={selectedAttendance} />
+                    <Attendance employeeId1 = {selectedAttendance}/>
                 </>
             ) : (
                 <Card className="p-3 mb-3 shadow-sm">
@@ -211,7 +224,7 @@ const EmployeeManagement = ({ staff }) => {
                                                     {isActive ? "Active" : "Inactive"}
                                                 </td>
                                                 <td>
-                                                    <Button variant="warning" className="text-dark fw-bold shadow-sm" onClick={() => setSelectedAttendance(emp.loginSessions)}>
+                                                    <Button variant="warning" className="text-dark fw-bold shadow-sm" onClick={() => setSelectedAttendance(emp.id)}>
                                                         <Eye size={16} className="me-1" /> Attendance
                                                     </Button>
                                                 </td>

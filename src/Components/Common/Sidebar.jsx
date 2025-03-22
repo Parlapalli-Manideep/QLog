@@ -1,13 +1,16 @@
-import React, { useState } from "react";
-import { Home, BarChart, CalendarCheck, Users, Settings, QrCode, User, UserPen } from "lucide-react";
+import React, {useEffect, useState } from "react";
+import { Home, BarChart, CalendarCheck, Users, Settings, QrCode, User} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded, setActiveComponent, role }) => {
+const SideBar = ({ isSidebarExpanded, setIsSidebarExpanded , role,id }) => {
     const [activeItem, setActiveItem] = useState("home");
-
-
+    const navigate = useNavigate();
+useEffect(() => {
+    navigate("home",{state:{id}});
+}, [id]);
     const handleItemClick = (item) => {
         setActiveItem(item);
-        setActiveComponent(item);
+        navigate(item ,{state:{id}});  
     };
 
     const menuItems = role === "manager" ? [

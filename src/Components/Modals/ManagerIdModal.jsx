@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Image } from "react-bootstrap";
 import { checkManagerIdExists, updateUser } from "../../Services/Users"; 
+import manager from "../../Assets/manager.jpg";
 
 const ManagerIdModal = ({ employee, show, onClose, onUpdate }) => {
     const [managerId, setManagerId] = useState("");
@@ -37,7 +38,7 @@ const ManagerIdModal = ({ employee, show, onClose, onUpdate }) => {
         <Modal show={show} centered backdrop="static" keyboard={false}>
             <Modal.Body className="text-center">
                 <Image
-                    src="https://as2.ftcdn.net/jpg/02/09/79/01/1000_F_209790157_lni2Rip3Dm1YrTNPW6jCuSI6sIADbrKD.jpg"
+                    src={manager}
                     alt="Manager Avatar"
                     className="mb-3"
                     roundedCircle

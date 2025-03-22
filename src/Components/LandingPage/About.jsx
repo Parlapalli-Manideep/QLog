@@ -1,10 +1,11 @@
+import aboutImage from "../../assets/aboutImage.jpg";
 const About = ({ aboutRef }) => {
   return (
     <div className="container py-5" ref={aboutRef}>
       <div className="row align-items-center text-center text-md-start">
         <div className="col-md-6 text-center">
           <img
-            src="https://scanova.io/blog/wp-content/uploads/2022/06/How-to-scan-a-QR-Code-from-a-screenshot.webp"
+            src={aboutImage}
             alt="About QLog"
             className="img-fluid shadow-lg"
             style={{ maxWidth: "85%", borderRadius: "15px" }}

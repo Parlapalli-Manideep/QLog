@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Card, Pagination } from "react-bootstrap";
 import { User, Trash2, ArrowLeft, Search } from "lucide-react";
-import { 
-    getUserById, 
+import {
+    getUserById,
     getManagers,
-    deleteEmployeeFromManager 
+    deleteEmployeeFromManager
 } from "../../Services/Users";
 import toast from "react-hot-toast";
 import ModalComponent from "../Modals/ModalComponent";
 import Profile from "../Employee/Profile";
+import { useLocation } from "react-router-dom";
 
-const Manage = ({ managerId, staff = [] }) => {
+const Manage = () => {
+    const [staff, setStaff] = useState([]);
+    const [managerId, setManagerId] = useState(null);
+    const id = useLocation().state?.id;
+    useEffect(() => {
+        const fetchStaff = async () => {
+            const manager = await getUserById(id, "manager");
+            setManagerId(manager.id);
+            setStaff(manager.staff);
+        }
+        fetchStaff();
+    },
+        [id]);
     const [employees, setEmployees] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -20,10 +33,8 @@ const Manage = ({ managerId, staff = [] }) => {
     const employeesPerPage = 8;
 
     useEffect(() => {
-        if (Array.isArray(staff) && staff.length > 0) {
-            fetchEmployees();
-        }
-    }, [staff]);
+        fetchEmployees();
+    }, [staff, managerId]);
 
     const fetchEmployees = async () => {
         try {
@@ -36,7 +47,7 @@ const Manage = ({ managerId, staff = [] }) => {
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
-        setCurrentPage(1); 
+        setCurrentPage(1);
     };
 
     const filteredEmployees = employees.filter(emp => {
@@ -60,17 +71,18 @@ const Manage = ({ managerId, staff = [] }) => {
 
     const handleDelete = async () => {
         try {
+            console.log("Deleting employee:", employeeToDelete, managerId);
             if (!employeeToDelete || !managerId) {
                 console.error("Missing employee or manager information");
                 return;
             }
-            
+
             await deleteEmployeeFromManager(managerId, employeeToDelete.id);
-            
+
             setEmployees(employees.filter(emp => emp.id !== employeeToDelete.id));
             setShowModal(false);
             setEmployeeToDelete(null);
-            
+
             toast.success(`Employee ${employeeToDelete.name} deleted successfully`);
             setCurrentPage(1);
         } catch (error) {
@@ -102,7 +114,7 @@ const Manage = ({ managerId, staff = [] }) => {
             {selectedEmployee ? (
                 <>
                     <div className="mb-4 mt-2">
-                        <button 
+                        <button
                             className="btn btn-light shadow-sm"
                             onClick={handleBack}
                             style={backButtonStyle}
@@ -126,7 +138,7 @@ const Manage = ({ managerId, staff = [] }) => {
                             <ArrowLeft size={18} className="me-2" /> Back to Directory
                         </button>
                     </div>
-                    <Profile employee={selectedEmployee} />
+                    <Profile employeeId={selectedEmployee} />
                 </>
             ) : (
                 <Card className="p-3 mb-3 shadow-sm">
@@ -172,12 +184,15 @@ const Manage = ({ managerId, staff = [] }) => {
                                                 </a>
                                             </td>
                                             <td>
-                                                <Button variant="info" className="text-white fw-bold shadow-sm" onClick={() => handleViewProfile(emp)}>
+                                                <Button variant="info" className="text-white fw-bold shadow-sm" onClick={() => handleViewProfile(emp.id)}>
                                                     <User size={16} className="me-1" /> Profile
                                                 </Button>
                                             </td>
                                             <td>
-                                                <Button variant="danger" className="fw-bold shadow-sm" onClick={() => confirmDelete(emp)}>
+                                                <Button variant="danger" className="fw-bold shadow-sm" onClick={() =>{ 
+                                                    confirmDelete(emp)
+                                                }
+                                                }>
                                                     <Trash2 size={16} className="me-1" /> Delete
                                                 </Button>
                                             </td>

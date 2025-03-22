@@ -14,23 +14,23 @@ function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, han
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg bg-body-tertiary sticky-top px-2">
-                <div className="container-fluid">
+            <nav className="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+                <div className="container-fluid bg-white d-flex">
                     <img 
-                        src="https://preview.redd.it/itachi-uchiha-v0-lkypptlpl8nd1.jpeg?auto=webp&s=2d798537a7ab59725da65a6c580498f6e1360192" 
+                        src="../src/Assets/Logo.ico" 
                         alt="Bootstrap" 
                         width="30" 
-                        height="24" 
+                        height="30" 
                     />
 
-                    <button onClick={handleHome} className="navbar-brand">QLog</button>
+                    <h1 onClick={handleHome} style={{cursor:"pointer", fontFamily: "Courier New, Courier, monospace"}} className="navbar-brand fs-2 fw-bold">QLog</h1>
 
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
 
                     <div className="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-                        <ul className="navbar-nav d-flex justify-content-center w-100">
+                        <ul className="navbar-nav d-flex justify-content-center align-items-center w-100">
                             <li className="nav-item">
                                 <button onClick={() => { handleFeatures(); closeNavbar(); }} className="nav-link">Features</button>
                             </li>

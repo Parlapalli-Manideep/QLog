@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Form } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from "recharts";
+import { getUserById } from "../../Services/Users";
 
 const COLORS = ["#4CAF50", "#FF9800", "#F44336", "#2196F3"];
 
@@ -49,7 +51,23 @@ const filterByDateRange = (sessions, startDate, endDate) => {
     });
 };
 
-const Stats = ({ loginSessions, leaves }) => {
+const Stats = () => {
+    const [loginSessions, setLoginSessions] = useState([]);
+    const [leaves, setLeaves] = useState([]);
+    const [attendanceRange, setAttendanceRange] = useState("1m");
+    const [sessionRange, setSessionRange] = useState("1m");
+    const location = useLocation();
+    const employeeId = location.state?.id;
+    useEffect(() => {   
+        const fetchEmployee = async () => {
+            if (!employeeId) return;
+            const employee = await getUserById(employeeId, "employee");
+            setLoginSessions(employee.loginSessions);
+            setLeaves(employee.leaves);
+        }
+        fetchEmployee();
+    }, [employeeId, loginSessions]); 
+
     if (!loginSessions || loginSessions.length === 0) {
         return <p className="text-center mt-4">No attendance records found.</p>;
     }
@@ -57,8 +75,7 @@ const Stats = ({ loginSessions, leaves }) => {
     const firstLoginDate = parseTimestamp(loginSessions[0].loginTime);
     const now = new Date();
 
-    const [attendanceRange, setAttendanceRange] = useState("1m");
-    const [sessionRange, setSessionRange] = useState("1m");
+    
 
     let attendanceStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
     if (attendanceRange === "3m") attendanceStartDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);

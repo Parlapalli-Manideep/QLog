@@ -3,13 +3,27 @@ import { QRCodeCanvas } from "qrcode.react";
 import { Card, Container, Row, Col, Badge, Button, Alert } from "react-bootstrap";
 import { MapPin, Activity, LogIn, LogOut, Clock } from "lucide-react";
 import { formatTime } from "../../Utils/AttendanceCalculations";
+import { useLocation } from "react-router-dom";
+import { getUserById } from "../../Services/Users";
 
-const QRCodeComponent = ({ employee, loginSessions = [] }) => {
+const QRCodeComponent = () => {
+    const [employee, setEmployee] = useState(null);
+    const [loginSessions, setLoginSessions] = useState([]);
+    const state = useLocation().state;
     const [location, setLocation] = useState(null);
     const [encodedData, setEncodedData] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [locationError, setLocationError] = useState(false);
     const [lastLogin, setLastLogin] = useState(null);
+    useEffect(() => {   
+            const fetchEmployee = async () => {
+                if (!state.id) return;
+                const employeedata = await getUserById(state.id, "employee");
+                setEmployee(employeedata)
+                setLoginSessions(employeedata.loginSessions)
+            }
+            fetchEmployee();
+        }, [state.id]); 
 
     const getLocation = () => {
         setIsLoading(true);
@@ -23,14 +37,13 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
                 };
 
                 const qrData = {
-                    id: employee.id,
-                    name: employee.name,
-                    email: employee.email,
-                    managerId: employee.managerId,
-                    location: `${loc.latitude},${loc.longitude}`,
+                    id: employee?.id,
+                    name: employee?.name,
+                    email: employee?.email,
+                    managerId: employee?.managerId,
+                    location: `${loc?.latitude},${loc?.longitude}`,
                     timestamp: new Date().toISOString(),
                 };
-                console.log(` location: ${loc.latitude},${loc.longitude}`);
                 
                 const encodedString = btoa(JSON.stringify(qrData));
 
@@ -80,7 +93,7 @@ const QRCodeComponent = ({ employee, loginSessions = [] }) => {
                     <Card className="shadow">
                         <Card.Header className="bg-primary text-white">
                             <div className="d-flex justify-content-between align-items-center">
-                                <h5 className="mb-0">{employee.name}'s QR Code</h5>
+                                <h5 className="mb-0">{employee?.name}'s QR Code</h5>
                                 {isActive && !isLoading && !locationError && (
                                     <Badge bg="success" className="d-flex align-items-center">
                                         <Activity size={16} className="me-1" /> Active

@@ -1,5 +1,7 @@
 import React from "react";
 import "./LoginModal.css";
+import manager from "../../Assets/manager.jpg"; 
+import employee from "../../Assets/employee.jpg";
 import { useNavigate } from "react-router-dom";
 
 function LoginModal({ show, handleClose }) {
@@ -15,7 +17,7 @@ function LoginModal({ show, handleClose }) {
                     <div className="modal-body text-center">
                         <div className="d-flex justify-content-center align-items-center gap-4 flex-column flex-md-row">
                             <div className="text-center">
-                                <img src="https://as2.ftcdn.net/jpg/02/09/79/01/1000_F_209790157_lni2Rip3Dm1YrTNPW6jCuSI6sIADbrKD.jpg" 
+                                <img src= {manager}
                                      alt="Manager" 
                                      className="rounded-circle mb-2 img-fluid" 
                                      style={{ width: "120px", height: "120px", objectFit: "cover" }} />
@@ -24,7 +26,7 @@ function LoginModal({ show, handleClose }) {
                                 }}>Manager Login</button>
                             </div>
                             <div className="text-center">
-                                <img src="https://png.pngtree.com/png-vector/20190316/ourmid/pngtree-employee-icon-design-template-vector-isolated-png-image_856368.jpg" 
+                                <img src={employee} 
                                      alt="Employee" 
                                      className="rounded-circle mb-2 img-fluid" 
                                      style={{ width: "120px", height: "120px", objectFit: "cover" }} />

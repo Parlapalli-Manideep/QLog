@@ -1,10 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { updateUser, getUserById, getUserData } from "../../Services/Users";
 import { MapPin, Map, Users, UserCheck, CalendarX } from "lucide-react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 
-const Home = ({ manager }) => {
+const ManagerHome = () => {
+  const [manager, setManager] = useState(null);
+  const id = useLocation().state?.id;
+  useEffect(() => { 
+    const fetchData = async () => {
+      const data = await getUserById(id, "manager");
+      setManager(data);
+    };
+    fetchData();
+  }, [id]);
   const [location, setLocation] = useState(manager?.location || { latitude: 17.3850, longitude: 78.4867, radius: "" });
   const [showModal, setShowModal] = useState(false);
   const [tempLocation, setTempLocation] = useState(null);
@@ -196,4 +206,4 @@ const Home = ({ manager }) => {
   );
 };
 
-export default Home;
+export default ManagerHome;

@@ -82,10 +82,43 @@
         },
         {
           "loginTime": "2025-03-20T22:36:50+05:30",
-          "logoutTime": null
+          "logoutTime": "2025-03-21T11:29:12+05:30"
+        },
+        {
+          "loginTime": "2025-03-21T17:19:36+05:30",
+          "logoutTime": "2025-03-21T17:22:11+05:30"
+        },
+        {
+          "loginTime": "2025-03-21T17:25:41+05:30",
+          "logoutTime": "2025-03-21T17:38:23+05:30"
+        },
+        {
+          "loginTime": "2025-03-21T17:51:50+05:30",
+          "logoutTime": "2025-03-21T17:54:22+05:30"
+        },
+        {
+          "loginTime": "2025-03-22T00:09:14+05:30",
+          "logoutTime": "2025-03-22T00:09:53+05:30"
+        },
+        {
+          "loginTime": "2025-03-22T18:00:29+05:30",
+          "logoutTime": "2025-03-22T18:01:16+05:30"
+        },
+        {
+          "loginTime": "2025-03-22T18:01:51+05:30",
+          "logoutTime": "2025-03-22T18:05:47+05:30"
+        },
+        {
+          "loginTime": "2025-03-22T18:06:54+05:30",
+          "logoutTime": "2025-03-22T18:08:48+05:30"
+        },
+        {
+          "loginTime": "2025-03-22T18:09:22+05:30",
+          "logoutTime": "2025-03-22T19:42:29+05:30"
         }
       ],
       "leaveRequests": [
+        "2025-03-24",
         "2025-03-26",
         "2025-04-02",
         "2025-04-03"
@@ -97,11 +130,12 @@
         "2025-03-25",
         "2025-03-22",
         "2025-03-27",
-        "2025-03-29"
+        "2025-03-29",
+        "2025-04-04"
       ],
-      "location": "Rajasthan",
-      "jobTitle": "SD-1",
-      "phone": "7032130321"
+      "location": "Hyderabad ",
+      "jobTitle": "SD-2",
+      "phone": "07032130321"
     },
     {
       "id": "1742268793911",
@@ -144,7 +178,7 @@
       "password": "Sur@123",
       "role": "employee",
       "method": "email",
-      "managerId": "1742046934872",
+      "managerId": "1742046934871",
       "loginSessions": [
         {
           "loginTime": "2025-03-18T10:30:00+05:30",
@@ -161,7 +195,7 @@
       "password": "Vig@123",
       "role": "employee",
       "method": "email",
-      "managerId": "1742046934872",
+      "managerId": "1742046934871",
       "loginSessions": [
         {
           "loginTime": "2025-03-18T08:00:00+05:30",
@@ -178,7 +212,7 @@
       "password": "Arun@123",
       "role": "employee",
       "method": "email",
-      "managerId": "1742046934873",
+      "managerId": "1742046934871",
       "loginSessions": [
         {
           "loginTime": "2025-03-17T10:00:00+05:30",
@@ -197,7 +231,7 @@
       "password": "Kir@123",
       "role": "employee",
       "method": "email",
-      "managerId": "1742046934873",
+      "managerId": "1742046934871",
       "loginSessions": [
         {
           "loginTime": "2025-03-17T09:30:00+05:30",
@@ -210,19 +244,14 @@
       ]
     },
     {
-      "id": "1742268793917",
-      "name": "mahesh",
-      "email": "mahesh@gmail.com",
-      "password": "Mah@123",
+      "id": "1742656234910",
+      "name": "ramaka",
+      "email": "ramaka@gmail.com",
+      "password": "Rama@123",
       "role": "employee",
       "method": "email",
-      "managerId": "1742046934874",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-18T11:00:00+05:30",
-          "logoutTime": "2025-03-18T15:00:00+05:30"
-        }
-      ],
+      "managerId": "1742046934871",
+      "loginSessions": [],
       "leaveRequests": [],
       "leaves": []
     }
@@ -242,7 +271,8 @@
         "1742268793914",
         "1742268793915",
         "1742268793916",
-        "1742268793917"
+        "1742655654277",
+        "1742656234910"
       ],
       "location": {
         "latitude": 17.492217862113346,
@@ -250,7 +280,17 @@
         "radius": 150
       },
       "phone": "123456788889",
-      "bio": "manideep"
+      "bio": "I am a manager"
+    },
+    {
+      "id": "1742537165653",
+      "name": "tester",
+      "email": "test@gmail.com",
+      "password": "tester123A@",
+      "role": "manager",
+      "method": "email",
+      "staff": [],
+      "location": {}
     }
   ]
 }

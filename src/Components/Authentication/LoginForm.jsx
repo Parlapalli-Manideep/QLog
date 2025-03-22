@@ -7,9 +7,10 @@ import { Mail, Lock } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
-import {checkUserExists, addUser,checkGoogleCredentials, checkCredentials } from '../../Services/Users'
+import {checkUserExists, addUser,checkGoogleCredentials, checkCredentials, getUserByEmail } from '../../Services/Users'
 import { AuthLayout } from './AuthenticationLayout';
 import { toast } from 'react-toastify';
+import google from '../../assets/google.ico'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -47,7 +48,8 @@ export function LoginForm() {
 
       await signInWithEmailAndPassword(auth, data.email, data.password);
       toast.success('Successfully logged in!');
-      navigate(`/${role}`,{state :{email : data.email,role:role}});
+      const userid = await getUserByEmail(data.email,role);
+      navigate(`/${role}`,{state :{id:userid.id}});
     } catch (error) {
       setUserMessage("Invalid Credentials")
       toast.error('Invalid credentials');
@@ -72,7 +74,8 @@ const handleGoogleLogin = async () => {
       role == "manager" ? (userData.staff = [], userData.location = {} ): ""
       await addUser(userData);
       toast.success('Successfully logged in with Google!');
-      navigate(`/${role}`,{state :{email : result.user.email,role:userData.role}});
+      const userid = await getUserByEmail(result.user.email,userData.role);
+      navigate(`/${role}`,{state :{id:userid.id}});
       }
       else{
         const check = await checkGoogleCredentials(result.user.email,role)
@@ -83,7 +86,8 @@ const handleGoogleLogin = async () => {
         else
         {
             toast.success('Successfully logged in with Google!');
-            navigate(`/${role}`,{state :{email : result.user.email,role:role}});
+            const userid = await getUserByEmail(result.user.email,role);
+            navigate(`/${role}`,{state :{id:userid.id}});
         }
     }
   } catch (error) {
@@ -94,8 +98,8 @@ const handleGoogleLogin = async () => {
 
   return (
     <AuthLayout 
-      title={`Welcome Back, ${role}`} 
-      subtitle="Login into your account to continue" >
+    title={`Welcome Back, ${role ? role.charAt(0).toUpperCase() + role.slice(1) : 'User'}`}
+      subtitle="Login into your account to continue">
     <div>  
       <form onSubmit={handleSubmit(handleLogin)} className="mb-4">
         <div className="mb-3">
@@ -157,7 +161,7 @@ const handleGoogleLogin = async () => {
         onClick={handleGoogleLogin}
         className="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2"
       >
-        <img src="https://www.google.com/favicon.ico" alt="Google" width="20" height="20" />
+        <img src={google} alt="Google" width="20" height="20" />
         Google
       </motion.button>
 

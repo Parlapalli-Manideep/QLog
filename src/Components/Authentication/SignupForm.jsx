@@ -11,6 +11,7 @@ import { PasswordStrength } from './PasswordStrength';
 import { addUser, checkUserExists,checkGoogleCredentials } from '../../Services/Users';
 import { AuthLayout } from './AuthenticationLayout';
 import { toast } from 'react-toastify';
+import google from '../../assets/google.ico'
 
 const signupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -96,7 +97,8 @@ const handleGoogleSignup = async () => {
         else
         {
             toast.success('Successfully logged in with Google!');
-            navigate(`/${role}`,{state :{email : result.user.email,role:role}});
+            const userid = await getUserByEmail(result.user.email,userData.role);
+            navigate(`/${role}`,{state :{id:userid.id}});
         }
     }
   } catch (error) {
@@ -106,7 +108,7 @@ const handleGoogleSignup = async () => {
 };
   return (
     <AuthLayout 
-              title={`Create an ${role} account`}
+              title={`Create an ${role ? role.charAt(0).toUpperCase() + role.slice(1) : 'User'} account`}
               subtitle="Sign up to get started"
     > 
     <div>
@@ -172,7 +174,7 @@ const handleGoogleSignup = async () => {
         onClick={handleGoogleSignup}
         className="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2"
       >
-        <img src="https://www.google.com/favicon.ico" alt="Google" width="20" height="20" />
+        <img src= {google} alt="Google" width="20" height="20" />
         Google
       </motion.button>
 

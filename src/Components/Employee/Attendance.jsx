@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, use, useEffect } from "react";
 import { Table, Pagination, Button, Dropdown } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,8 +6,29 @@ import { calculateWorkingHours, classifySession, filterSessions, formatDate, for
 import DownloadTablePDF from "../Common/DownloadPdf";
 import ModalComponent from "../Modals/ModalComponent";
 import { Download } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { getUserById } from "../../Services/Users";
 
-const Attendance = ({ loginSessions }) => {
+const Attendance = ({ employeeId1 }) => {
+    const location = useLocation();
+    const [employeeId, setEmployeeId] = useState(null);
+    const id = location.state?.id;
+
+    useEffect(() => {
+        setEmployeeId(id);
+        if (employeeId1) {
+            setEmployeeId(employeeId1);
+        }
+    }, []);
+    const [loginSessions, setLoginSessions] = useState([]);
+    useEffect(() => {
+        const fetchEmployee = async () => {
+            if (!employeeId) return;
+            const employee = await getUserById(employeeId, "employee");
+            setLoginSessions(employee?.loginSessions);
+        }
+        fetchEmployee();
+    }, [employeeId]);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [sessionType, setSessionType] = useState("All Sessions");
@@ -21,9 +42,10 @@ const Attendance = ({ loginSessions }) => {
     };
 
     const filteredSessions = useMemo(() => {
+        if (!loginSessions) return [];
         setCurrentPage(1);
         return filterSessions(loginSessions, filterDates.startDate, filterDates.endDate, sessionType).reverse();
-    }, [loginSessions, filterDates, sessionType]);
+    }, [loginSessions, filterDates, sessionType, employeeId]);
 
     const totalPages = Math.ceil(filteredSessions.length / 10);
     const displayedSessions = filteredSessions.slice((currentPage - 1) * 10, currentPage * 10);
@@ -38,7 +60,6 @@ const Attendance = ({ loginSessions }) => {
                 return { color: "blue", fontWeight: "bold" };
         }
     };
-
     return (
         <div style={{ marginLeft: "20px" }} className="p-4 bg-white shadow-sm rounded">
 
@@ -54,7 +75,6 @@ const Attendance = ({ loginSessions }) => {
                     <span className="fw-semibold">Download</span>
                 </Button>
             </div>
-
 
             <div className="d-flex justify-content-between mb-3">
                 <div className="d-flex gap-2">
@@ -86,7 +106,6 @@ const Attendance = ({ loginSessions }) => {
                 </Dropdown>
             </div>
 
-            {/* Table */}
             <Table bordered striped hover className="text-center" id="AttendenceData">
                 <thead>
                     <tr>
@@ -119,7 +138,6 @@ const Attendance = ({ loginSessions }) => {
                         </tr>
                     )}
                 </tbody>
-
             </Table>
 
             {totalPages > 1 && (
@@ -169,11 +187,8 @@ const Attendance = ({ loginSessions }) => {
                     generatePDF();
                     setShowModal(false);
                 }}
-
             />
-
         </div>
     );
 };
-
 export default Attendance;

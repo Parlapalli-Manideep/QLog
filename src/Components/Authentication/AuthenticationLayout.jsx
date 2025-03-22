@@ -1,10 +1,9 @@
 import { motion } from 'framer-motion';
 import loginImg from "../../assets/LoginPagePicture.jpg";
 
-export function AuthLayout({ children, title, subtitle }) {
+export function AuthLayout({ children, title}) {
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center">
-
       <div className="d-flex flex-column flex-lg-row w-100" style={{ maxWidth: '64rem' }}>
         
         <motion.div 

@@ -1,4 +1,7 @@
 import React from "react";
+import howItWorks1 from "../../assets/HowItWorks1.png";
+import howItWorks2 from "../../assets/howItWorks2.png";
+import howItWorks3 from "../../assets/howItWorks3.jpg";
 
 function HowItWorks({ howItWorksRef }) {
   return (
@@ -28,7 +31,7 @@ function HowItWorks({ howItWorksRef }) {
             >
               <div className="mb-3">
                 <img
-                  src="https://dhiway.com/wp-content/uploads/2021/09/Artboard-2-1.png"
+                  src={howItWorks1}
                   alt="Generate QR Code"
                   className="img-fluid w-100"
                   style={{ height: "180px", objectFit: "contain", borderRadius: "8px" }}
@@ -59,7 +62,7 @@ function HowItWorks({ howItWorksRef }) {
             >
               <div className="mb-3">
                 <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTW0r7hESbpYlu7CgUHRv9RXXvA5vJ-C_9WQ&s"
+                  src={howItWorks2}
                   alt="Scan QR Code"
                   className="img-fluid w-100"
                   style={{ height: "180px", objectFit: "contain", borderRadius: "8px" }}
@@ -90,7 +93,7 @@ function HowItWorks({ howItWorksRef }) {
             >
               <div className="mb-3">
                 <img
-                  src="https://t3.ftcdn.net/jpg/12/43/15/30/360_F_1243153029_q1tKivkYWxKL55S2g0ViVFJDDILVsmsh.jpg"
+                  src={howItWorks3}
                   alt="Access Granted"
                   className="img-fluid w-100"
                   style={{ height: "180px", objectFit: "contain", borderRadius: "8px" }}

@@ -5,13 +5,23 @@ import {
 } from "recharts";
 import { Container, Row, Col, Card, Spinner, Form, Nav, Tab } from "react-bootstrap";
 import { calculateAttendanceMetrics } from "../../Utils/AnalyticsCalculations";
+import { useLocation } from "react-router-dom";
+import { getUserById } from "../../Services/Users";
 
-const Analytics = ({ manager }) => {
+const Analytics = () => {
+    const id = useLocation().state?.id;
+    const [manager, setManager] = useState(null);
     const [loading, setLoading] = useState(true);
     const [attendanceRange, setAttendanceRange] = useState("all");
     const [metrics, setMetrics] = useState(null);
     const [activeTab, setActiveTab] = useState("overview");
-
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getUserById(id, "manager");
+            setManager(data);
+        };
+        fetchData();
+    }, [id]);
     useEffect(() => {
         if (manager?.staff) {
             fetchData();
