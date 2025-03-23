@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Modal, Button, Form, Image } from "react-bootstrap";
 import { checkManagerIdExists, updateUser } from "../../Services/Users"; 
 import manager from "../../Assets/manager.jpg";
@@ -6,7 +6,6 @@ import manager from "../../Assets/manager.jpg";
 const ManagerIdModal = ({ employee, show, onClose, onUpdate }) => {
     const [managerId, setManagerId] = useState("");
     const [error, setError] = useState("");
-
     const handleSave = async () => {
         if (!managerId.trim()) {
             setError("Manager ID is required.");

@@ -7,23 +7,28 @@ import QRCodeScanner from "../../Pages/Scanner/QRScanner";
 import { useLocation } from "react-router-dom";
 
 const EmployeeHome = () => {
-
     const location = useLocation();
     const [employee, setEmployee] = useState(null);
     const [manager, setManager] = useState(null);
     const [showQRScanner, setShowQRScanner] = useState(false);
     useEffect(() => {
         const fetchEmployee = async () => {
+            if (!location.state?.id) return;
             const employeeData = await getUserById(location.state.id, "employee");
             setEmployee(employeeData);
         };
         fetchEmployee();
+    }, [location.state?.id]);
+
+    useEffect(() => {
+        if (!employee?.managerId) return;
         const fetchManager = async () => {
-            const managerData = await getUserById(employee?.managerId, "manager");
+            const managerData = await getUserById(employee.managerId, "manager");
             setManager(managerData);
         };
         fetchManager();
-    }, [location.state.id, employee?.managerId,showQRScanner]);
+    }, [employee?.managerId]);
+
     const [showCalendar, setShowCalendar] = useState(false);
     const [existingLeaves, setExistingLeaves] = useState([]);
     const [pendingLeaves, setPendingLeaves] = useState([]);
@@ -79,7 +84,6 @@ const EmployeeHome = () => {
                 }
             }
         };
-
         fetchLeaves();
     }, [employee?.id, currentYear, today]);
 
@@ -101,7 +105,7 @@ const EmployeeHome = () => {
     };
 
     return (
-        <div style={{ marginLeft: "20px" }}>
+        <div>
             {successMessage && (
                 <Alert variant="success" className="mb-4" onClose={() => setSuccessMessage("")} dismissible>
                     {successMessage}
@@ -114,11 +118,11 @@ const EmployeeHome = () => {
                 </Alert>
             )}
 
-            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
+            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4 text-break">
                 <h5 className="fw-semibold mb-3 fw-bold text-primary">Employee Information</h5>
-                <div className="d-flex flex-wrap justify-content-center gap-3">
+                <div className="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
                     {employeeDetails.map((detail, index) => (
-                        <div className="d-flex" style={{ flex: "1 1 250px", maxWidth: "300px" }} key={index}>
+                        <div className="d-flex" style={{ flex: "1 1 200px", minWidth: "45%" }} key={index}>
                             <Card className="p-3 shadow-sm bg-light w-100">
                                 <div className="d-flex align-items-center">
                                     {detail.icon}
@@ -132,10 +136,9 @@ const EmployeeHome = () => {
                     ))}
                 </div>
             </div>
-
-            <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
-                <h5 className="fw-semibold mb-3 fw-bold text-success">Quick Information</h5>
-                <div className="d-flex flex-wrap gap-3">
+            <div className="d-flex flex-column flex-md-row flex-wrap gap-2 gap-md-3 text-break p-4">
+                <h5 className="fw-semibold mb-3 fw-bold text-success w-100">Quick Information</h5>
+                <div className="d-flex flex-wrap gap-3 w-100">
                     <div className="p-3 shadow-sm rounded bg-light flex-grow-1">
                         <p className="text-muted mb-1">Manager Name</p>
                         <p className="fw-bold">{manager?.name || "N/A"}</p>
@@ -198,7 +201,7 @@ const EmployeeHome = () => {
             {pendingLeaves.length > 0 && (
                 <div className="p-4 shadow-sm rounded bg-white w-100 mb-4">
                     <h5 className="fw-semibold mb-3 fw-bold text-warning">Pending Leave Requests</h5>
-                    <div className="d-flex flex-wrap">
+                    <div className="d-flex flex-wrap" style={{ maxWidth: "100%", overflowX: "hidden" }}>
                         {pendingLeaves
                             .sort((a, b) => {
                                 const [yearA, monthA, dayA] = a.split('-');
@@ -206,9 +209,10 @@ const EmployeeHome = () => {
                                 return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
                             })
                             .map(date => {
-                                return (<span key={date} className="badge bg-warning text-dark me-2 mb-2 p-2">
-                                    {date}
-                                </span>)
+                                return (
+                                    <span key={date} className="badge bg-warning text-dark me-1 me-sm-2 mb-2 p-2">
+                                        {date}
+                                    </span>)
                             })}
                     </div>
                 </div>
@@ -243,15 +247,14 @@ const EmployeeHome = () => {
             >
                 <Modal.Body className="p-0">
                     <div className="position-relative">
-                        <div className="bg-white p-4 rounded shadow">
-                            <button
-                                type="button"
-                                className="btn-close position-absolute"
-                                style={{ top: "15px", right: "15px" }}
-                                onClick={handleQRScannerClose}
-                                aria-label="Close"
-                            ></button>
-                            <QRCodeScanner />
+                        <div className="text-center my-2 my-sm-3">
+                            <Button
+                                variant="primary"
+                                onClick={() => setShowQRScanner(true)}
+                                className="px-3 px-md-4 py-2"
+                            >
+                                <QRCodeScanner />
+                            </Button>
                         </div>
                     </div>
                 </Modal.Body>

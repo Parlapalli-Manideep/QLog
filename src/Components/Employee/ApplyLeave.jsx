@@ -3,7 +3,7 @@ import { Button, Alert } from "react-bootstrap";
 import { AlertCircle } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { updateUser, getEmployeeLeaves } from "../../Services/Users";
+import { updateUser } from "../../Services/Users";
 
 const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
     const [selectedDates, setSelectedDates] = useState([]);
@@ -164,6 +164,7 @@ const ApplyLeave = ({ employee, onLeaveApplied, onCancel }) => {
                         ? "bg-primary text-white rounded"
                         : "";
                 }}
+                style={{ fontSize: "10px", width: "220px" }} 
             />
 
             {selectedDates.length > 0 && (

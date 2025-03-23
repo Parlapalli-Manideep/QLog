@@ -49,7 +49,7 @@ function Manager() {
                 id={managerId}
             />
 
-                <div className="container mt-5">
+                <div className="mt-5" style={{marginLeft:"70px"}}>
                     <Outlet />
                 </div>
             </div>

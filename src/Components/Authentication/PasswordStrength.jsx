@@ -13,7 +13,7 @@ export function PasswordStrength({ password }) {
     <div className="mt-2">
       {requirements.map((requirement, index) => {
         const isMet = requirement.regex.test(password);
-        
+
         return (
           <motion.div
             key={index}

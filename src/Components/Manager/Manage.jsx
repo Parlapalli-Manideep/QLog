@@ -3,7 +3,6 @@ import { Table, Button, Form, Card, Pagination } from "react-bootstrap";
 import { User, Trash2, ArrowLeft, Search } from "lucide-react";
 import {
     getUserById,
-    getManagers,
     deleteEmployeeFromManager
 } from "../../Services/Users";
 import toast from "react-hot-toast";
@@ -110,7 +109,7 @@ const Manage = () => {
     };
 
     return (
-        <div className="container" style={{ marginLeft: "20px" }}>
+        <div className="container">
             {selectedEmployee ? (
                 <>
                     <div className="mb-4 mt-2">
@@ -141,83 +140,85 @@ const Manage = () => {
                     <Profile employeeId={selectedEmployee} />
                 </>
             ) : (
-                <Card className="p-3 mb-3 shadow-sm">
-                    <h3 className="mb-4 text-primary text-center fw-bold" style={{ fontFamily: "Arial, sans-serif" }}>
-                        EMPLOYEE DIRECTORY
-                    </h3>
+                <Card className="shadow-sm">
+                    <div className="p-3 p-md-4">
+                        <h3 className="mb-3 mb-md-4 text-primary text-center fw-bold">
+                            EMPLOYEE DIRECTORY
+                        </h3>
 
-                    <div className="mb-4">
-                        <div className="input-group">
-                            <span className="input-group-text bg-primary text-white">
-                                <Search size={18} />
-                            </span>
-                            <Form.Control
-                                type="text"
-                                placeholder="Search by name or employee ID..."
-                                value={searchQuery}
-                                onChange={handleSearch}
-                                className="border-primary"
-                            />
+                        <div className="mb-3">
+                            <div className="input-group">
+                                <span className="input-group-text bg-primary text-white">
+                                    <Search size={18} />
+                                </span>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search by name or employee ID..."
+                                    value={searchQuery}
+                                    onChange={handleSearch}
+                                    className="border-primary"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="table-responsive" style={{ maxHeight: "75vh", overflowY: "auto" }}>
-                        <Table striped bordered hover responsive className="shadow-sm">
-                            <thead className="table-dark text-center">
-                                <tr>
-                                    <th>EID</th>
-                                    <th>NAME</th>
-                                    <th>EMAIL</th>
-                                    <th>PROFILE</th>
-                                    <th>DELETE</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentEmployees.length > 0 ? (
-                                    currentEmployees.map((emp) => (
-                                        <tr key={emp.id} className="text-center align-middle">
-                                            <td>{emp.id}</td>
-                                            <td className="text-uppercase">{emp.name}</td>
-                                            <td>
-                                                <a href={`mailto:${emp.email}`} className="text-primary fw-bold text-decoration-none">
-                                                    {emp.email}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <Button variant="info" className="text-white fw-bold shadow-sm" onClick={() => handleViewProfile(emp.id)}>
-                                                    <User size={16} className="me-1" /> Profile
-                                                </Button>
-                                            </td>
-                                            <td>
-                                                <Button variant="danger" className="fw-bold shadow-sm" onClick={() =>{ 
-                                                    confirmDelete(emp)
-                                                }
-                                                }>
-                                                    <Trash2 size={16} className="me-1" /> Delete
-                                                </Button>
+                        <div className="table-responsive">
+                            <Table bordered striped hover className="text-center">
+                                <thead className="table-dark text-center">
+                                    <tr>
+                                        <th>EID</th>
+                                        <th>NAME</th>
+                                        <th>EMAIL</th>
+                                        <th>PROFILE</th>
+                                        <th>DELETE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentEmployees.length > 0 ? (
+                                        currentEmployees.map((emp) => (
+                                            <tr key={emp.id} className="text-center align-middle">
+                                                <td>{emp.id}</td>
+                                                <td className="text-uppercase">{emp.name}</td>
+                                                <td>
+                                                    <a href={`mailto:${emp.email}`} className="text-primary fw-bold text-decoration-none">
+                                                        {emp.email}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <Button variant="info" className="text-white fw-bold shadow-sm" onClick={() => handleViewProfile(emp.id)}>
+                                                        <User size={16} className="me-1" /> Profile
+                                                    </Button>
+                                                </td>
+                                                <td>
+                                                    <Button variant="danger" className="fw-bold shadow-sm" onClick={() => {
+                                                        confirmDelete(emp)
+                                                    }
+                                                    }>
+                                                        <Trash2 size={16} className="me-1" /> Delete
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="text-center text-muted fw-bold">
+                                                No Employees Found
                                             </td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" className="text-center text-muted fw-bold">
-                                            No Employees Found
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </Table>
-                    </div>
+                                    )}
+                                </tbody>
+                            </Table>
+                        </div>
 
-                    {filteredEmployees.length > employeesPerPage && (
-                        <Pagination className="justify-content-center mt-3">
-                            {[...Array(Math.ceil(filteredEmployees.length / employeesPerPage)).keys()].map((num) => (
-                                <Pagination.Item key={num + 1} active={num + 1 === currentPage} onClick={() => paginate(num + 1)}>
-                                    {num + 1}
-                                </Pagination.Item>
-                            ))}
-                        </Pagination>
-                    )}
+                        {filteredEmployees.length > employeesPerPage && (
+                            <Pagination className="justify-content-center mt-3">
+                                {[...Array(Math.ceil(filteredEmployees.length / employeesPerPage)).keys()].map((num) => (
+                                    <Pagination.Item key={num + 1} active={num + 1 === currentPage} onClick={() => paginate(num + 1)}>
+                                        {num + 1}
+                                    </Pagination.Item>
+                                ))}
+                            </Pagination>
+                        )}
+                    </div>
                 </Card>
             )}
 

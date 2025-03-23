@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { 
-  PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line
+import {
+    PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line
 } from "recharts";
 import { Container, Row, Col, Card, Spinner, Form, Nav, Tab } from "react-bootstrap";
 import { calculateAttendanceMetrics } from "../../Utils/AnalyticsCalculations";
@@ -69,12 +69,12 @@ const Analytics = () => {
     }
 
     return (
-        <Container style={{ margin: "85px auto auto 20px" }}>
-            <div className="d-flex justify-content-between align-items-center mb-4">
+        <Container>
+            <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <h4 className="text-primary font-weight-bold">Employee Analytics Dashboard</h4>
-                <Form.Select 
-                    value={attendanceRange} 
-                    onChange={(e) => setAttendanceRange(e.target.value)} 
+                <Form.Select
+                    value={attendanceRange}
+                    onChange={(e) => setAttendanceRange(e.target.value)}
                     className="w-auto"
                 >
                     <option value="all">All Time</option>
@@ -86,7 +86,7 @@ const Analytics = () => {
             </div>
 
             <Tab.Container id="analytics-tabs" activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
-                <Nav variant="tabs" className="mb-4">
+                <Nav variant="tabs" className="mb-4 flex-nowrap overflow-auto small-tabs">
                     <Nav.Item>
                         <Nav.Link eventKey="overview">Overview</Nav.Link>
                     </Nav.Item>
@@ -103,8 +103,8 @@ const Analytics = () => {
 
                 <Tab.Content>
                     <Tab.Pane eventKey="overview">
-                        <Row>
-                            <Col md={6}>
+                        <Row className="gy-4">
+                            <Col lg={6} md={12}>
                                 <Card className="shadow-sm mb-4">
                                     <Card.Body>
                                         <h5 className="text-center mb-4">Attendance Overview</h5>
@@ -135,14 +135,13 @@ const Analytics = () => {
                                 <Card className="shadow-sm mb-4">
                                     <Card.Body>
                                         <h5 className="text-center mb-4">Login Hour Distribution</h5>
-                                        <ResponsiveContainer width="100%" height={300}>
-                                            <BarChart data={metrics.hourDistribution}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="hour" label={{ value: 'Hour of Day', position: 'insideBottom', offset: -5 }} />
-                                                <YAxis label={{ value: 'Login Count', angle: -90, position: 'insideLeft' }} />
-                                                <Tooltip />
-                                                <Bar dataKey="count" fill="#8884d8" />
-                                            </BarChart>
+                                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>                                            <BarChart data={metrics.hourDistribution}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="hour" label={{ value: 'Hour of Day', position: 'insideBottom', offset: -5 }} />
+                                            <YAxis label={{ value: 'Login Count', angle: -90, position: 'insideLeft' }} />
+                                            <Tooltip />
+                                            <Bar dataKey="count" fill="#8884d8" />
+                                        </BarChart>
                                         </ResponsiveContainer>
                                     </Card.Body>
                                 </Card>

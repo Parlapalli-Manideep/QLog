@@ -15,15 +15,15 @@ const QRCodeComponent = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [locationError, setLocationError] = useState(false);
     const [lastLogin, setLastLogin] = useState(null);
-    useEffect(() => {   
-            const fetchEmployee = async () => {
-                if (!state.id) return;
-                const employeedata = await getUserById(state.id, "employee");
-                setEmployee(employeedata)
-                setLoginSessions(employeedata.loginSessions)
-            }
-            fetchEmployee();
-        }, [state.id]); 
+    useEffect(() => {
+        const fetchEmployee = async () => {
+            if (!state.id) return;
+            const employeedata = await getUserById(state.id, "employee");
+            setEmployee(employeedata)
+            setLoginSessions(employeedata.loginSessions)
+        }
+        fetchEmployee();
+    }, [state.id]);
 
     const getLocation = () => {
         setIsLoading(true);
@@ -44,7 +44,7 @@ const QRCodeComponent = () => {
                     location: `${loc?.latitude},${loc?.longitude}`,
                     timestamp: new Date().toISOString(),
                 };
-                
+
                 const encodedString = btoa(JSON.stringify(qrData));
 
                 setEncodedData(encodedString);
@@ -129,7 +129,7 @@ const QRCodeComponent = () => {
                                 <div className="qr-container py-2">
                                     <QRCodeCanvas
                                         value={encodedData}
-                                        size={220}
+                                        size={window.innerWidth < 576 ? 180 : 220}
                                         level="H"
                                         includeMargin={true}
                                         bgColor="#ffffff"
@@ -140,8 +140,8 @@ const QRCodeComponent = () => {
                         </Card.Body>
 
                         {lastLogin && !locationError && (
-                            <Card.Footer className="bg-light">
-                                <Row className="text-center">
+                            <Card.Footer className="bg-light p-2 p-sm-3">
+                                <Row className="text-center g-2">
                                     <Col xs={6} className="border-end">
                                         <div className="d-flex align-items-center justify-content-center">
                                             <LogIn size={16} className="me-1 text-success" />

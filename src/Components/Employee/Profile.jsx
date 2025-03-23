@@ -4,10 +4,10 @@ import { getUserById, updateUser } from "../../Services/Users";
 import { useLocation } from "react-router-dom";
 import profilePic from "../../Assets/defaultProfilePic.jpg";
 
-const ProfilePage = ({employeeId}) => {
+const ProfilePage = ({ employeeId }) => {
     const [employee, setEmployee] = useState(null);
     const state = useLocation().state;
-    
+
     const storedProfile = localStorage.getItem(`employee_${employee?.id}`);
     const parsedProfile = storedProfile ? JSON.parse(storedProfile) : {};
     const defaultProfile = {
@@ -16,30 +16,30 @@ const ProfilePage = ({employeeId}) => {
         jobTitle: "",
         phone: "",
     };
-    const [profile, setProfile] = useState({ ...defaultProfile, ...parsedProfile,...employee });
+    const [profile, setProfile] = useState({ ...defaultProfile, ...parsedProfile, ...employee });
     const [editing, setEditing] = useState(false);
     const [tempProfile, setTempProfile] = useState({});
     useEffect(() => {
         const fetchEmployee = async () => {
             if (!state.id) return;
-            if(employeeId){
+            if (employeeId) {
                 const employeedata = await getUserById(employeeId, "employee");
                 setEmployee(employeedata)
                 const photo = localStorage.getItem(`employee_${employee?.id}`);
                 const Profile = storedProfile ? JSON.parse(photo) : {};
-                setProfile({...defaultProfile, ...Profile, ...employeedata });
+                setProfile({ ...defaultProfile, ...Profile, ...employeedata });
             }
-            else{
+            else {
                 const employeedata = await getUserById(state.id, "employee");
                 setEmployee(employeedata)
                 const photo = localStorage?.getItem(`employee_${employee?.id}`);
                 const Profile = storedProfile ? JSON.parse(photo) : {};
-                setProfile({...defaultProfile, ...Profile, ...employeedata });
+                setProfile({ ...defaultProfile, ...Profile, ...employeedata });
             }
-            
+
         }
         fetchEmployee();
-    }, [state.id,storedProfile]);
+    }, [state.id, storedProfile]);
     const handleChange = (e) => {
         setTempProfile({ ...tempProfile, [e.target.name]: e.target.value });
     };
@@ -84,7 +84,7 @@ const ProfilePage = ({employeeId}) => {
     };
 
     return (
-        <div className="container position-relative" style={{ marginLeft: "20px" }}>
+        <div className="container">
             {editing && (
                 <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 backdrop-blur" style={{ zIndex: 10 }}></div>
             )}
@@ -92,7 +92,8 @@ const ProfilePage = ({employeeId}) => {
             <div className="position-relative bg-primary text-white rounded-top text-center" style={{ height: "140px" }}></div>
 
             <div className="text-center" style={{ marginTop: "-70px" }}>
-                <div className="d-inline-block position-relative border border-4 border-white rounded-circle overflow-hidden" style={{ width: "140px", height: "140px" }}>
+                <div className="d-inline-block position-relative border border-4 border-white rounded-circle overflow-hidden"
+                    style={{ width: "120px", height: "120px", maxWidth: "30vw", maxHeight: "30vw" }}>
                     <img src={profile.profilePic} alt="Profile" className="w-100 h-100 object-fit-cover" />
                 </div>
             </div>
@@ -112,8 +113,8 @@ const ProfilePage = ({employeeId}) => {
                         <p>💼 {profile.jobTitle || "Not Updated"}</p>
                     </div>
                 </div>
-                <div className="col-md-6">
-                    <div className="p-3 shadow-sm rounded bg-light">
+                <div className="col-md-6 mb-3 mb-md-0">
+                    <div className="p-3 shadow-sm rounded bg-light h-100">
                         <h5 className="fw-bold">Work Information</h5>
                         <p><strong>Employee ID:</strong> {profile.id || "N/A"}</p>
                         <p><strong>Email:</strong> {profile.email || "N/A"}</p>
@@ -123,14 +124,16 @@ const ProfilePage = ({employeeId}) => {
                 </div>
             </div>
 
-           {!(employeeId==undefined) || <div className="text-center mt-3">
+            {!(employeeId == undefined) || <div className="text-center mt-3">
                 <button onClick={() => setEditing(true)} className="btn btn-dark btn-sm">
                     Edit Profile
                 </button>
             </div>}
 
             {editing && (
-                <div className="position-fixed top-50 start-50 translate-middle bg-white p-4 rounded shadow" style={{ zIndex: 20, width: "350px" }}>
+
+                <div className="position-fixed top-50 start-50 translate-middle bg-white p-3 p-sm-4 rounded shadow"
+                    style={{ zIndex: 20, width: "90%", maxWidth: "350px" }}>
                     <form onSubmit={handleSubmit}>
                         <h5 className="text-center fw-bold mb-3">Edit Profile</h5>
 

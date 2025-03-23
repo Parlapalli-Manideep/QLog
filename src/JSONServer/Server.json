@@ -1,295 +1,187 @@
 {
   "employee": [
     {
-      "id": "1741873214002",
+      "id": "1742749349271",
       "name": "MANIDEEP PARLAPALLI",
       "email": "manideepparlapalli@gmail.com",
       "role": "employee",
       "method": "google",
-      "managerId": "1742046934871",
+      "managerId": "1742749310980",
       "loginSessions": [
         {
-          "loginTime": "2025-02-20T14:00:00+05:30",
-          "logoutTime": "2025-02-20T22:30:00+05:30"
+          "loginTime": "2025-02-21T15:39:00+05:30",
+          "logoutTime": "2025-02-22T00:24:00+05:30"
         },
         {
-          "loginTime": "2025-02-21T14:45:00+05:30",
-          "logoutTime": "2025-02-21T23:59:00+05:30"
+          "loginTime": "2025-02-22T16:24:00+05:30",
+          "logoutTime": "2025-02-23T00:53:00+05:30"
         },
         {
-          "loginTime": "2025-02-24T13:20:00+05:30",
-          "logoutTime": "2025-02-24T22:15:00+05:30"
+          "loginTime": "2025-02-25T16:52:00+05:30",
+          "logoutTime": "2025-02-26T01:47:00+05:30"
         },
         {
-          "loginTime": "2025-02-25T15:30:00+05:30",
-          "logoutTime": "2025-02-25T00:30:00+05:30"
+          "loginTime": "2025-02-26T14:32:00+05:30",
+          "logoutTime": "2025-02-26T22:22:00+05:30"
         },
         {
-          "loginTime": "2025-02-26T13:50:00+05:30",
-          "logoutTime": "2025-02-26T23:00:00+05:30"
+          "loginTime": "2025-02-27T14:24:00+05:30",
+          "logoutTime": "2025-02-27T22:53:00+05:30"
         },
         {
-          "loginTime": "2025-03-01T14:15:00+05:30",
-          "logoutTime": "2025-03-01T22:50:00+05:30"
+          "loginTime": "2025-02-28T13:34:00+05:30",
+          "logoutTime": "2025-02-28T21:42:00+05:30"
         },
         {
-          "loginTime": "2025-03-03T14:15:00+05:30",
-          "logoutTime": "2025-03-03T22:50:00+05:30"
+          "loginTime": "2025-03-01T13:46:00+05:30",
+          "logoutTime": "2025-03-01T21:24:00+05:30"
         },
         {
-          "loginTime": "2025-03-04T13:00:00+05:30",
-          "logoutTime": "2025-03-04T21:30:00+05:30"
+          "loginTime": "2025-03-03T16:45:00+05:30",
+          "logoutTime": "2025-03-04T01:00:00+05:30"
         },
         {
-          "loginTime": "2025-03-05T13:00:00+05:30",
-          "logoutTime": "2025-03-05T21:30:00+05:30"
+          "loginTime": "2025-03-04T16:18:00+05:30",
+          "logoutTime": "2025-03-04T23:27:00+05:30"
         },
         {
-          "loginTime": "2025-03-06T14:40:00+05:30",
-          "logoutTime": "2025-03-06T23:30:00+05:30"
+          "loginTime": "2025-03-05T16:56:00+05:30",
+          "logoutTime": "2025-03-06T00:46:00+05:30"
         },
         {
-          "loginTime": "2025-03-07T14:40:00+05:30",
-          "logoutTime": "2025-03-07T23:30:00+05:30"
+          "loginTime": "2025-03-07T15:26:00+05:30",
+          "logoutTime": "2025-03-07T22:39:00+05:30"
         },
         {
-          "loginTime": "2025-03-08T14:40:00+05:30",
-          "logoutTime": "2025-03-08T23:30:00+05:30"
+          "loginTime": "2025-03-10T15:58:00+05:30",
+          "logoutTime": "2025-03-10T23:02:00+05:30"
         },
         {
-          "loginTime": "2025-03-10T15:35:00+05:30",
-          "logoutTime": "2025-03-10T00:40:00+05:30"
+          "loginTime": "2025-03-11T14:31:00+05:30",
+          "logoutTime": "2025-03-11T22:08:00+05:30"
         },
         {
-          "loginTime": "2025-03-11T13:45:00+05:30",
-          "logoutTime": "2025-03-11T22:00:00+05:30"
+          "loginTime": "2025-03-13T15:31:00+05:30",
+          "logoutTime": "2025-03-13T22:34:00+05:30"
         },
         {
-          "loginTime": "2025-03-12T15:10:00+05:30",
-          "logoutTime": "2025-03-12T23:50:00+05:30"
+          "loginTime": "2025-03-14T14:58:00+05:30",
+          "logoutTime": "2025-03-14T23:30:00+05:30"
         },
         {
-          "loginTime": "2025-03-17T13:25:00+05:30",
-          "logoutTime": "2025-03-17T21:55:00+05:30"
+          "loginTime": "2025-03-15T14:16:00+05:30",
+          "logoutTime": "2025-03-15T21:57:00+05:30"
         },
         {
-          "loginTime": "2025-03-18T00:00:00+05:30",
-          "logoutTime": "2025-03-18T08:08:00+05:30"
+          "loginTime": "2025-03-17T17:17:00+05:30",
+          "logoutTime": "2025-03-18T00:49:00+05:30"
         },
         {
-          "loginTime": "2025-03-20T10:32:36+05:30",
-          "logoutTime": "2025-03-20T22:20:32+05:30"
+          "loginTime": "2025-03-19T17:05:00+05:30",
+          "logoutTime": "2025-03-20T01:50:00+05:30"
         },
         {
-          "loginTime": "2025-03-20T22:36:50+05:30",
-          "logoutTime": "2025-03-21T11:29:12+05:30"
+          "loginTime": "2025-03-20T14:33:00+05:30",
+          "logoutTime": "2025-03-20T21:34:00+05:30"
         },
         {
-          "loginTime": "2025-03-21T17:19:36+05:30",
-          "logoutTime": "2025-03-21T17:22:11+05:30"
-        },
-        {
-          "loginTime": "2025-03-21T17:25:41+05:30",
-          "logoutTime": "2025-03-21T17:38:23+05:30"
-        },
-        {
-          "loginTime": "2025-03-21T17:51:50+05:30",
-          "logoutTime": "2025-03-21T17:54:22+05:30"
-        },
-        {
-          "loginTime": "2025-03-22T00:09:14+05:30",
-          "logoutTime": "2025-03-22T00:09:53+05:30"
-        },
-        {
-          "loginTime": "2025-03-22T18:00:29+05:30",
-          "logoutTime": "2025-03-22T18:01:16+05:30"
-        },
-        {
-          "loginTime": "2025-03-22T18:01:51+05:30",
-          "logoutTime": "2025-03-22T18:05:47+05:30"
-        },
-        {
-          "loginTime": "2025-03-22T18:06:54+05:30",
-          "logoutTime": "2025-03-22T18:08:48+05:30"
-        },
-        {
-          "loginTime": "2025-03-22T18:09:22+05:30",
-          "logoutTime": "2025-03-22T19:42:29+05:30"
+          "loginTime": "2025-03-21T16:47:00+05:30",
+          "logoutTime": "2025-03-22T00:47:00+05:30"
         }
       ],
+      "leaveRequests": [],
+      "leaves": []
+    },
+    {
+      "id": "1742750044073",
+      "name": "emp",
+      "email": "emp1@gmail.com",
+      "password": "Emp@1234",
+      "role": "employee",
+      "method": "email",
+      "managerId": "1742749310980",
+      "loginSessions": [],
       "leaveRequests": [
-        "2025-03-24",
-        "2025-03-26",
-        "2025-04-02",
-        "2025-04-03"
-      ],
-      "leaves": [
-        "2025-02-28",
-        "2025-03-13",
-        "2025-03-14",
         "2025-03-25",
-        "2025-03-22",
         "2025-03-27",
-        "2025-03-29",
-        "2025-04-04"
+        "2025-03-28"
       ],
-      "location": "Hyderabad ",
-      "jobTitle": "SD-2",
-      "phone": "07032130321"
-    },
-    {
-      "id": "1742268793911",
-      "name": "satheesh",
-      "email": "satheesh@gmail.com",
-      "password": "Sath@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934871",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-18T00:00:00+05:30",
-          "logoutTime": "2025-03-18T02:00:00+05:30"
-        }
-      ],
-      "leaveRequests": [],
       "leaves": []
     },
     {
-      "id": "1742268793912",
-      "name": "ramesh",
-      "email": "ramesh@gmail.com",
-      "password": "Ram@123",
+      "id": "1742752568841",
+      "name": "Vanjari Tejaswini",
+      "email": "tejaswinivanjari0@gmail.com",
       "role": "employee",
-      "method": "email",
-      "managerId": "1742046934871",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-18T09:00:00+05:30",
-          "logoutTime": null
-        }
-      ],
-      "leaveRequests": [],
-      "leaves": []
-    },
-    {
-      "id": "1742268793913",
-      "name": "suresh",
-      "email": "suresh@gmail.com",
-      "password": "Sur@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934871",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-18T10:30:00+05:30",
-          "logoutTime": "2025-03-18T17:30:00+05:30"
-        }
-      ],
-      "leaveRequests": [],
-      "leaves": []
-    },
-    {
-      "id": "1742268793914",
-      "name": "vignesh",
-      "email": "vignesh@gmail.com",
-      "password": "Vig@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934871",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-18T08:00:00+05:30",
-          "logoutTime": null
-        }
-      ],
-      "leaveRequests": [],
-      "leaves": []
-    },
-    {
-      "id": "1742268793915",
-      "name": "arun",
-      "email": "arun@gmail.com",
-      "password": "Arun@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934871",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-17T10:00:00+05:30",
-          "logoutTime": "2025-03-17T18:00:00+05:30"
-        }
-      ],
-      "leaveRequests": [],
-      "leaves": [
-        "2025-03-18"
-      ]
-    },
-    {
-      "id": "1742268793916",
-      "name": "kiran",
-      "email": "kiran@gmail.com",
-      "password": "Kir@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934871",
-      "loginSessions": [
-        {
-          "loginTime": "2025-03-17T09:30:00+05:30",
-          "logoutTime": "2025-03-17T16:30:00+05:30"
-        }
-      ],
-      "leaveRequests": [],
-      "leaves": [
-        "2025-03-18"
-      ]
-    },
-    {
-      "id": "1742656234910",
-      "name": "ramaka",
-      "email": "ramaka@gmail.com",
-      "password": "Rama@123",
-      "role": "employee",
-      "method": "email",
-      "managerId": "1742046934871",
+      "method": "google",
+      "managerId": "1742749310980",
       "loginSessions": [],
       "leaveRequests": [],
       "leaves": []
+    },
+    {
+      "id": "1010101010101",
+      "name": "Guest Employee",
+      "email": "guestemployee@guest.com",
+      "password": "JF23 kjGK!HK!H#!",
+      "role": "employee",
+      "method": "GUEST",
+      "managerId": "2020202020202",
+      "loginSessions": [
+        { "loginTime": "2025-02-01T09:15:00+05:30", "logoutTime": "2025-02-01T17:30:00+05:30" },
+        { "loginTime": "2025-02-03T09:00:00+05:30", "logoutTime": "2025-02-03T17:00:00+05:30" },
+        { "loginTime": "2025-02-05T09:20:00+05:30", "logoutTime": "2025-02-05T17:10:00+05:30" },
+        { "loginTime": "2025-02-07T14:14:00+05:30", "logoutTime": "2025-02-07T17:20:00+05:30" },
+        { "loginTime": "2025-02-10T09:05:00+05:30", "logoutTime": "2025-02-10T17:15:00+05:30" },
+        { "loginTime": "2025-02-12T09:25:00+05:30", "logoutTime": "2025-02-12T17:35:00+05:30" },
+        { "loginTime": "2025-02-14T09:00:00+05:30", "logoutTime": "2025-02-14T17:10:00+05:30" },
+        { "loginTime": "2025-02-17T08:30:00+05:30", "logoutTime": "2025-02-17T17:40:00+05:30" },
+        { "loginTime": "2025-02-19T09:10:00+05:30", "logoutTime": "2025-02-19T17:20:00+05:30" },
+        { "loginTime": "2025-02-21T06:15:00+05:30", "logoutTime": "2025-02-21T17:25:00+05:30" }
+      ]
+      ,
+      "leaveRequests": [],
+      "leaves":[
+        "2025-03-03",
+        "2025-03-04",
+        "2025-03-06",
+        "2025-03-10",
+        "2025-03-12",
+        "2025-03-18",
+        "2025-03-20",
+        "2025-03-26"
+      ]
+      
     }
   ],
   "manager": [
     {
-      "id": "1742046934871",
+      "id": "1742749310980",
       "name": "manideep parlapalli",
       "email": "parlapallimanideep@gmail.com",
       "role": "manager",
       "method": "google",
       "staff": [
-        "1741873214002",
-        "1742268793911",
-        "1742268793912",
-        "1742268793913",
-        "1742268793914",
-        "1742268793915",
-        "1742268793916",
-        "1742655654277",
-        "1742656234910"
+        "1742749349271",
+        "1742750044073",
+        "1742752568841"
       ],
       "location": {
-        "latitude": 17.492217862113346,
-        "longitude": 78.40168518983091,
-        "radius": 150
-      },
-      "phone": "123456788889",
-      "bio": "I am a manager"
+        "latitude": 17.370713044014533,
+        "longitude": 78.5085223502767,
+        "radius": 152
+      }
     },
     {
-      "id": "1742537165653",
-      "name": "tester",
-      "email": "test@gmail.com",
-      "password": "tester123A@",
+      "id": "2020202020202",
+      "name": "Guest Manager",
+      "email": "guestmanager@guest.com",
+      "password": "JF23 kjGK!HK!H#!",
       "role": "manager",
-      "method": "email",
-      "staff": [],
+      "method": "GUEST",
+      "staff": [
+        "1010101010101"
+      ],
       "location": {}
     }
   ]

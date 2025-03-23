@@ -71,7 +71,7 @@ const ManagerProfile = () => {
     };
 
     return (
-        <div className="container position-relative" style={{ marginLeft: "20px" }}>
+        <div className="container position-relative">
             {editing && (
                 <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 backdrop-blur" style={{ zIndex: 10 }}></div>
             )}
@@ -89,7 +89,7 @@ const ManagerProfile = () => {
                 <p className="text-muted">{profile.role || "Role Not Assigned"}</p>
             </div>
 
-            <div className="row mt-4">
+            <div className="row g-3 mt-4">
                 <div className="col-md-6">
                     <div className="p-3 shadow-sm rounded bg-light h-100">
                         <h5 className="fw-bold">Personal Information</h5>

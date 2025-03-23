@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 
 const EmployeeManagement = () => {
     const [staff, setStaff] = useState([]);
-    const id=useLocation().state?.id;
+    const id = useLocation().state?.id;
     const [employees, setEmployees] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filter, setFilter] = useState("all");
@@ -18,17 +18,17 @@ const EmployeeManagement = () => {
     const [showLeaveModal, setShowLeaveModal] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const employeesPerPage = 8;
-useEffect(() => {
-    const fetchStaff = async () => {
-        try {
-            const employee = await getUserById(id, "manager");
-            setStaff(employee.staff);
-        } catch (error) {
-            console.error("Error fetching staff:", error);
-        }
-    };
-    fetchStaff();
-}, [id]);
+    useEffect(() => {
+        const fetchStaff = async () => {
+            try {
+                const employee = await getUserById(id, "manager");
+                setStaff(employee.staff);
+            } catch (error) {
+                console.error("Error fetching staff:", error);
+            }
+        };
+        fetchStaff();
+    }, [id]);
     useEffect(() => {
         if (Array.isArray(staff) && staff.length > 0) {
             fetchEmployees();
@@ -47,22 +47,22 @@ useEffect(() => {
     const handleLeaveAction = async (action, date) => {
         try {
             const updatedEmployee = { ...selectedEmployee };
-            
+
             updatedEmployee.leaveRequests = updatedEmployee.leaveRequests.filter(d => d !== date);
-            
+
             if (action === "approve") {
                 updatedEmployee.leaves = [...(updatedEmployee.leaves || []), date];
             }
-            
+
             await updateUser(selectedEmployee.email, selectedEmployee.role, {
                 leaveRequests: updatedEmployee.leaveRequests,
                 leaves: updatedEmployee.leaves
             });
-            
+
             setSelectedEmployee(updatedEmployee);
-            
+
             fetchEmployees();
-            
+
             if (updatedEmployee.leaveRequests.length === 0) {
                 setShowLeaveModal(false);
             }
@@ -72,22 +72,22 @@ useEffect(() => {
     };
 
     const filteredEmployees = employees.filter(emp => {
-        const searchMatch = 
-            emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        const searchMatch =
+            emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             emp.id.toString().includes(searchQuery);
-            
+
         const lastSession = emp?.loginSessions?.[emp.loginSessions.length - 1];
         const isActive = lastSession?.loginTime?.startsWith(new Date().toISOString().split("T")[0]) && !lastSession?.logoutTime;
         const hasLeaveRequests = emp.leaveRequests && emp.leaveRequests.length > 0;
-        
+
         let statusMatch = true;
         if (filter === "active") statusMatch = isActive;
         if (filter === "inactive") statusMatch = !isActive;
-        
+
         let leaveMatch = true;
         if (leaveFilter === "requests") leaveMatch = hasLeaveRequests;
         if (leaveFilter === "no-requests") leaveMatch = !hasLeaveRequests;
-        
+
         return searchMatch && statusMatch && leaveMatch;
     });
 
@@ -119,11 +119,11 @@ useEffect(() => {
     };
 
     return (
-        <div className="container" style={{ marginLeft: "20px" }}>
+        <div className="container">
             {selectedAttendance ? (
                 <>
                     <div className="mb-4 mt-2">
-                        <button 
+                        <button
                             className="btn btn-light shadow-sm"
                             onClick={handleBack}
                             style={backButtonStyle}
@@ -147,125 +147,125 @@ useEffect(() => {
                             <ArrowLeft size={18} className="me-2" /> Back to Employees
                         </button>
                     </div>
-                    <Attendance employeeId1 = {selectedAttendance}/>
+                    <Attendance employeeId1={selectedAttendance} />
                 </>
             ) : (
-                <Card className="p-3 mb-3 shadow-sm">
-                    <h3 className="mb-4 text-primary text-center fw-bold" style={{ fontFamily: "Arial, sans-serif" }}>
-                        EMPLOYEES LIST
-                    </h3>
+                <Card className="shadow-sm">
+                    <div className="p-3 p-md-4">
+                        <h3 className="mb-3 mb-md-4 text-primary text-center fw-bold">
+                            EMPLOYEES LIST
+                        </h3>
 
-                    <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
-                        <div className="flex-grow-1" style={{ minWidth: "150px" }}>
-                            <Form.Control
-                                type="text"
-                                placeholder="Search by name or employee ID..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="border-primary w-100"
-                            />
+                        <div className="d-flex flex-column flex-md-row align-items-md-center gap-3 mb-3">
+                            <div className="flex-grow-1">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search by name or employee ID..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="border-primary w-100"
+                                />
+                            </div>
+
+                            <div className="d-flex flex-column flex-sm-row gap-2">
+                                <Form.Select
+                                    value={filter}
+                                    onChange={(e) => setFilter(e.target.value)}
+                                    className="border-primary"
+                                >
+                                    <option value="all">All Employees</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </Form.Select>
+
+                                <Form.Select
+                                    value={leaveFilter}
+                                    onChange={(e) => setLeaveFilter(e.target.value)}
+                                    className="border-primary"
+                                >
+                                    <option value="all">All Requests</option>
+                                    <option value="requests">With Requests</option>
+                                    <option value="no-requests">No Requests</option>
+                                </Form.Select>
+                            </div>
                         </div>
 
-                        <div style={{ width: "180px", flexShrink: 0 }}>
-                            <Form.Select
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value)}
-                                className="border-primary w-100"
-                            >
-                                <option value="all">All Employees</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Select>
-                        </div>
-
-                        <div style={{ width: "180px", flexShrink: 0 }}>
-                            <Form.Select
-                                value={leaveFilter}
-                                onChange={(e) => setLeaveFilter(e.target.value)}
-                                className="border-primary w-100"
-                            >
-                                <option value="all">All Requests</option>
-                                <option value="requests">With Requests</option>
-                                <option value="no-requests">No Requests</option>
-                            </Form.Select>
-                        </div>
-                    </div>
-
-                    <div className="table-responsive" style={{ maxHeight: "75vh", overflowY: "auto" }}>
-                        <Table striped bordered hover responsive className="shadow-sm">
-                            <thead className="table-dark text-center">
-                                <tr>
-                                    <th>EID</th>
-                                    <th>NAME</th>
-                                    <th>EMAIL</th>
-                                    <th>STATUS</th>
-                                    <th>ATTENDANCE</th>
-                                    <th>LEAVES</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentEmployees.length > 0 ? (
-                                    currentEmployees.map((emp) => {
-                                        const lastSession = emp?.loginSessions?.[emp.loginSessions.length - 1];
-                                        const isActive = lastSession?.loginTime?.startsWith(new Date().toISOString().split("T")[0]) && !lastSession?.logoutTime;
-                                        const hasLeaveRequests = emp.leaveRequests && emp.leaveRequests.length > 0;
-
-                                        return (
-                                            <tr key={emp.id} className="text-center align-middle">
-                                                <td>{emp.id}</td>
-                                                <td className="text-uppercase">{emp.name}</td>
-                                                <td>
-                                                    <a href={`mailto:${emp.email}`} className="text-primary fw-bold text-decoration-none">
-                                                        {emp.email}
-                                                    </a>
-                                                </td>
-                                                <td className={isActive ? "text-success fw-bold" : "text-danger fw-bold"}>
-                                                    {isActive ? <UserCheck size={18} className="me-2" /> : <UserX size={18} className="me-2" />}
-                                                    {isActive ? "Active" : "Inactive"}
-                                                </td>
-                                                <td>
-                                                    <Button variant="warning" className="text-dark fw-bold shadow-sm" onClick={() => setSelectedAttendance(emp.id)}>
-                                                        <Eye size={16} className="me-1" /> Attendance
-                                                    </Button>
-                                                </td>
-                                                <td>
-                                                    <Button 
-                                                        variant={hasLeaveRequests ? "danger" : "secondary"} 
-                                                        className="fw-bold shadow-sm" 
-                                                        onClick={() => openLeaveModal(emp)}
-                                                        disabled={!hasLeaveRequests}
-                                                    >
-                                                        <Calendar size={16} className="me-1" /> 
-                                                        {hasLeaveRequests ? (
-                                                            <>
-                                                                Requests <Badge bg="light" text="dark" pill>{emp.leaveRequests.length}</Badge>
-                                                            </>
-                                                        ) : "No Requests"}
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })
-                                ) : (
+                        <div className="table-responsive">
+                        <Table bordered striped hover className="text-center">
+                                <thead className="table-dark text-center">
                                     <tr>
-                                        <td colSpan="6" className="text-center text-muted fw-bold">
-                                            No Employees Found
-                                        </td>
+                                        <th>EID</th>
+                                        <th>NAME</th>
+                                        <th>EMAIL</th>
+                                        <th>STATUS</th>
+                                        <th>ATTENDANCE</th>
+                                        <th>LEAVES</th>
                                     </tr>
-                                )}
-                            </tbody>
-                        </Table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {currentEmployees.length > 0 ? (
+                                        currentEmployees.map((emp) => {
+                                            const lastSession = emp?.loginSessions?.[emp.loginSessions.length - 1];
+                                            const isActive = lastSession?.loginTime?.startsWith(new Date().toISOString().split("T")[0]) && !lastSession?.logoutTime;
+                                            const hasLeaveRequests = emp.leaveRequests && emp.leaveRequests.length > 0;
 
-                    {filteredEmployees.length > employeesPerPage && (
-                        <Pagination className="justify-content-center mt-3">
-                            {[...Array(Math.ceil(filteredEmployees.length / employeesPerPage)).keys()].map((num) => (
-                                <Pagination.Item key={num + 1} active={num + 1 === currentPage} onClick={() => paginate(num + 1)}>
-                                    {num + 1}
-                                </Pagination.Item>
-                            ))}
-                        </Pagination>
-                    )}
+                                            return (
+                                                <tr key={emp.id} className="text-center align-middle">
+                                                    <td>{emp.id}</td>
+                                                    <td className="text-uppercase">{emp.name}</td>
+                                                    <td>
+                                                        <a href={`mailto:${emp.email}`} className="text-primary fw-bold text-decoration-none">
+                                                            {emp.email}
+                                                        </a>
+                                                    </td>
+                                                    <td className={isActive ? "text-success fw-bold" : "text-danger fw-bold"}>
+                                                        {isActive ? <UserCheck size={18} className="me-2" /> : <UserX size={18} className="me-2" />}
+                                                        {isActive ? "Active" : "Inactive"}
+                                                    </td>
+                                                    <td>
+                                                        <Button variant="warning" className="text-dark fw-bold shadow-sm" onClick={() => setSelectedAttendance(emp.id)}>
+                                                            <Eye size={16} className="me-1" /> Attendance
+                                                        </Button>
+                                                    </td>
+                                                    <td>
+                                                        <Button
+                                                            variant={hasLeaveRequests ? "danger" : "secondary"}
+                                                            className="fw-bold shadow-sm"
+                                                            onClick={() => openLeaveModal(emp)}
+                                                            disabled={!hasLeaveRequests}
+                                                        >
+                                                            <Calendar size={16} className="me-1" />
+                                                            {hasLeaveRequests ? (
+                                                                <>
+                                                                    Requests <Badge bg="light" text="dark" pill>{emp.leaveRequests.length}</Badge>
+                                                                </>
+                                                            ) : "No Requests"}
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="6" className="text-center text-muted fw-bold">
+                                                No Employees Found
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </Table>
+                        </div>
+
+                        {filteredEmployees.length > employeesPerPage && (
+                            <Pagination className="justify-content-center mt-3">
+                                {[...Array(Math.ceil(filteredEmployees.length / employeesPerPage)).keys()].map((num) => (
+                                    <Pagination.Item key={num + 1} active={num + 1 === currentPage} onClick={() => paginate(num + 1)}>
+                                        {num + 1}
+                                    </Pagination.Item>
+                                ))}
+                            </Pagination>
+                        )}
+                    </div>
                 </Card>
             )}
 

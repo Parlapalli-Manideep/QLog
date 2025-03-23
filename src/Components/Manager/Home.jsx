@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { updateUser, getUserById, getUserData } from "../../Services/Users";
 import { MapPin, Map, Users, UserCheck, CalendarX } from "lucide-react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
@@ -8,29 +8,41 @@ import { useLocation } from "react-router-dom";
 const ManagerHome = () => {
   const [manager, setManager] = useState(null);
   const id = useLocation().state?.id;
-  useEffect(() => { 
-    const fetchData = async () => {
-      const data = await getUserById(id, "manager");
-      setManager(data);
-    };
-    fetchData();
-  }, [id]);
-  const [location, setLocation] = useState(manager?.location || { latitude: 17.3850, longitude: 78.4867, radius: "" });
+  
+  const defaultLocation = { latitude: 17.3850, longitude: 78.4867, radius: "" };
+  
+  const [location, setLocation] = useState(defaultLocation);
   const [showModal, setShowModal] = useState(false);
   const [tempLocation, setTempLocation] = useState(null);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [activeEmployees, setActiveEmployees] = useState(0);
   const [employeesOnLeave, setEmployeesOnLeave] = useState(0);
   
+  useEffect(() => { 
+    const fetchData = async () => {
+      if (id) {
+        const data = await getUserById(id, "manager");
+        setManager(data);
+      }
+    };
+    fetchData();
+  }, [id]);
+  
   useEffect(() => {
-    if (manager?.staff && Array.isArray(manager.staff)) {
-      fetchEmployeeData();
+    if (manager) {
+      if (manager.location) {
+        setLocation(manager.location);
+      }
+      
+      if (manager.staff && Array.isArray(manager.staff)) {
+        fetchEmployeeData();
+      }
     }
-    setLocation(manager?.location || { latitude: 17.3850, longitude: 78.4867, radius: "" });
   }, [manager]);
 
-
   const fetchEmployeeData = async () => {
+    if (!manager || !manager.staff) return;
+    
     let activeCount = 0;
     let leaveCount = 0;
     const todayDate = new Date().toLocaleDateString("en-CA"); 
@@ -61,6 +73,11 @@ const ManagerHome = () => {
     }
 
     try {
+      if (!manager || !manager.email) {
+        showTemporaryMessage("Manager data not loaded properly.", "danger");
+        return;
+      }
+
       const updatedFields = {
         location: {
           latitude: parseFloat(location.latitude),
@@ -94,7 +111,10 @@ const ManagerHome = () => {
   };
 
   const openMapModal = () => {
-    setTempLocation({ latitude: location.latitude, longitude: location.longitude });
+    setTempLocation({ 
+      latitude: location.latitude || defaultLocation.latitude, 
+      longitude: location.longitude || defaultLocation.longitude 
+    });
     setShowModal(true);
   };
 
@@ -114,8 +134,11 @@ const ManagerHome = () => {
     }
   };
 
+  const mapCenterLat = tempLocation?.latitude || location.latitude || defaultLocation.latitude;
+  const mapCenterLng = tempLocation?.longitude || location.longitude || defaultLocation.longitude;
+
   return (
-    <div className="container" style={{ marginLeft: "20px" }}>
+    <div className="container">
       {message.text && (
         <Alert variant={message.type} dismissible>
           {message.text}
@@ -134,7 +157,7 @@ const ManagerHome = () => {
             <Form.Label>Latitude</Form.Label>
             <Form.Control
               type="text"
-              value={location.latitude}
+              value={location.latitude || ""}
               onChange={(e) => setLocation({ ...location, latitude: e.target.value })}
             />
           </Form.Group>
@@ -142,7 +165,7 @@ const ManagerHome = () => {
             <Form.Label>Longitude</Form.Label>
             <Form.Control
               type="text"
-              value={location.longitude}
+              value={location.longitude || ""}
               onChange={(e) => setLocation({ ...location, longitude: e.target.value })}
             />
           </Form.Group>
@@ -150,7 +173,7 @@ const ManagerHome = () => {
             <Form.Label>Radius (meters)</Form.Label>
             <Form.Control
               type="number"
-              value={location.radius}
+              value={location.radius || ""}
               onChange={(e) => setLocation({ ...location, radius: e.target.value })}
             />
           </Form.Group>
@@ -186,7 +209,7 @@ const ManagerHome = () => {
           <Modal.Title>Select Location</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <MapContainer center={[tempLocation?.latitude || location.latitude, tempLocation?.longitude || location.longitude]} zoom={13} style={{ height: "400px", width: "100%" }}>
+          <MapContainer center={[mapCenterLat, mapCenterLng]} zoom={13} style={{ height: "400px", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <LocationSelector />
           </MapContainer>
