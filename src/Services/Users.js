@@ -126,3 +126,13 @@ export const deleteEmployeeFromManager = async (managerId, employeeId) => {
     throw error;
   }
 };
+
+export const updateLoginSessions = async (id, updatedSessions) => {
+  try {
+    const response = await axios.patch(`${BASE_URL}employee/${id}`, { loginSessions: updatedSessions });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating login sessions:", error);
+    throw error;
+  }
+};

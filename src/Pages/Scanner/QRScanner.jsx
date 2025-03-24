@@ -1,56 +1,47 @@
 import { useState, useEffect } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode/esm/html5-qrcode-scanner";
-import { BASE_URL, getManagers, getUserById } from "../../Services/Users";
-import axios from "axios";
+import { getManagers, getUserById, updateLoginSessions } from "../../Services/Users";
+import { Button } from "react-bootstrap";
+import { X } from "lucide-react";
 
-const QRCodeScanner = () => {
+const QRCodeScanner = ({onClose}) => {
     const [status, setStatus] = useState("");
 
     useEffect(() => {
-    const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
 
-    scanner.render(handleScan, handleError);
+        scanner.render(handleScan, handleError);
 
-    return () => {
-        scanner.clear(); 
-        stopCamera();  
+        return () => {
+            scanner.clear();
+            stopCamera();
+        };
+    }, []);
+
+    const stopCamera = () => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                stream.getTracks().forEach(track => track.stop());
+            })
+            .catch((err) => console.error("Error stopping camera:", err));
     };
-}, []);
-
-const stopCamera = () => {
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            stream.getTracks().forEach(track => track.stop());
-        })
-        .catch((err) => console.error("Error stopping camera:", err));
-};
 
     const isWithinRange = (empLat, empLng, managerLat, managerLng, radius) => {
         const toRad = (value) => (value * Math.PI) / 180;
-    
         const earthRadius = 6371000;
-        
         const lat1 = toRad(managerLat);
         const lon1 = toRad(managerLng);
         const lat2 = toRad(empLat);
         const lon2 = toRad(empLng);
-    
         const dLat = lat2 - lat1;
         const dLng = lon2 - lon1;
-    
         const a =
             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         const distance = earthRadius * c;
-    
-        
-    
         return distance <= radius;
     };
-    
-
     const handleScan = async (decodedText) => {
         try {
             const decodedData = JSON.parse(atob(decodedText));
@@ -92,7 +83,7 @@ const stopCamera = () => {
                 updatedSessions.push({ loginTime: currentTime, logoutTime: null });
             }
 
-            await axios.patch(`${BASE_URL}employee/${id}`, { loginSessions: updatedSessions });
+            await updateLoginSessions(id, updatedSessions)
 
             setStatus("✅ Attendance Updated Successfully!");
         } catch (error) {
@@ -106,7 +97,15 @@ const stopCamera = () => {
     };
 
     return (
-        <div className="container text-center">
+        <div className="container text-center bg-secondary">
+            <Button
+                variant="light"
+                className="position-absolute top-0 end-0 border-0 bg-transparent"
+                onClick={onClose}
+                aria-label="Close"
+            >
+                <X size={24} color="#dc3545" />
+            </Button>
             <h3>QR Code Scanner</h3>
             <div id="reader" style={{ width: "100%" }}></div>
             <div className="mt-3">

@@ -101,7 +101,6 @@ const EmployeeHome = () => {
 
     const handleQRScannerClose = () => {
         setShowQRScanner(false);
-
     };
 
     return (
@@ -248,13 +247,7 @@ const EmployeeHome = () => {
                 <Modal.Body className="p-0">
                     <div className="position-relative">
                         <div className="text-center my-2 my-sm-3">
-                            <Button
-                                variant="primary"
-                                onClick={() => setShowQRScanner(true)}
-                                className="px-3 px-md-4 py-2"
-                            >
-                                <QRCodeScanner />
-                            </Button>
+                            <QRCodeScanner onClose={handleQRScannerClose} />
                         </div>
                     </div>
                 </Modal.Body>
