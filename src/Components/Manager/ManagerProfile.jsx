@@ -2,7 +2,7 @@ import { useState, useEffect, use } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getUserById, updateUser } from "../../Services/Users";
 import { useLocation } from "react-router-dom";
-import defaultProfilePic from "../../Assets/defaultProfilePic.jpg"; 
+import defaultProfilePic from "../../assets/defaultProfilePic.jpg"; 
 
 const ManagerProfile = () => {
     const id = useLocation().state?.id;
