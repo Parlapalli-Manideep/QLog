@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getUserById, updateUser } from "../../Services/Users";
 import { useLocation } from "react-router-dom";
-import profilePic from "../../Assets/defaultProfilePic.jpg";
+import profilePic from "../../assets/defaultProfilePic.jpg"
 
 const ProfilePage = ({ employeeId }) => {
     const [employee, setEmployee] = useState(null);
