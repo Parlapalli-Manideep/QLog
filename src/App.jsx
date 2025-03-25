@@ -15,8 +15,7 @@ import ManagerHome from "./Components/Manager/Home";
 import Employees from "./Components/Manager/Employees";
 import Manage from "./Components/Manager/Manage";
 import Analytics from "./Components/Manager/Analytics";
-import ManagerProfile from "./Components/Manager/managerProfile";
-
+import ManagerProfile from "./Components/Manager/ManagerProfile"
 function App() {
   return (
     <BrowserRouter>
