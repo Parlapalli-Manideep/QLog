@@ -24,7 +24,7 @@ const Employee = () => {
                 return;
             }
 
-            const managerUser = await getUserById(employeeUser.managerId, "manager");
+            const managerUser = await getUserById(employeeUser?.managerId, "manager");
             setManager(managerUser);
         };
 

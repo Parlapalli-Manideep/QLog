@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { Card, Container, Row, Col, Badge, Button, Alert } from "react-bootstrap";
-import { MapPin, Activity, LogIn, LogOut, Clock, CloudFog } from "lucide-react";
+import { MapPin, Activity, LogIn, LogOut, Clock } from "lucide-react";
 import { formatTime } from "../../Utils/AttendanceCalculations";
 import { useLocation } from "react-router-dom";
 import { getUserById } from "../../Services/Users";
@@ -35,7 +35,6 @@ const QRCodeComponent = () => {
                     latitude: position.coords.latitude.toFixed(6),
                     longitude: position.coords.longitude.toFixed(6),
                 };
-                console.log("loc",loc);
                 
                 const qrData = {
                     id: employee?.id,
@@ -45,7 +44,7 @@ const QRCodeComponent = () => {
                     location: `${loc?.latitude},${loc?.longitude}`,
                     timestamp: new Date().toISOString(),
                 };
-
+                
                 const encodedString = btoa(JSON.stringify(qrData));
 
                 setEncodedData(encodedString);

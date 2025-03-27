@@ -107,7 +107,7 @@ const Attendance = ({ employeeId1 }) => {
                         </Button>
                     </Col>
                     <Col xs={12} md={4} className="d-flex justify-content-md-end">
-                        <Dropdown className="w-100 w-md-auto">
+                        <Dropdown className="w-md-auto">
                             <Dropdown.Toggle
                                 variant="secondary"
                                 className="w-100"

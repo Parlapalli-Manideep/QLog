@@ -16,9 +16,22 @@ import Employees from "./Components/Manager/Employees";
 import Manage from "./Components/Manager/Manage";
 import Analytics from "./Components/Manager/Analytics";
 import ManagerProfile from "./Components/Manager/ManagerProfile"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <BrowserRouter>
+    <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+    />
       <Routes>
         <Route path="/" element={<Home />} />
 

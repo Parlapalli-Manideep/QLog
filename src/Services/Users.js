@@ -2,9 +2,42 @@ import axios from "axios";
 
 export const BASE_URL = "http://localhost:3000/";
 
-export const getEmployees = async () => {
-  const employee = await axios.get(`${BASE_URL}employee`);
-  return employee.data;
+export const checkEmployeeExists = async (email) => {
+  const employee = await axios.get(`${BASE_URL}employee/exists/${email}`)
+  return employee.data.exists
+};
+export const checkManagerExists = async (email) => {
+  const manager = await axios.get(`${BASE_URL}manager/exists/${email}`)
+  return manager.data.exists
+};
+export const checkUserExists = async (email) => {
+  const employee = await axios.get(`${BASE_URL}employee/exists/${email}`)
+  const manager = await axios.get(`${BASE_URL}manager/exists/${email}`)
+
+  return employee.data.exists || manager.data.exists
+};
+export const addUser = async (user) => {
+  await axios.post(BASE_URL+user.role, user);
+};
+export const getId = async (email,role)=>
+{
+  const user = await axios.get(`${BASE_URL+role}/${email}`)
+  return user.data
+}
+
+export const getUserById = async (id, role) => {
+  const users = await axios.get(`${BASE_URL+role}/user/${id}`)
+  return users.data
+};
+
+export const getEmployeeLeaves = async (employeeId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}employee/${employeeId}/leaves`);
+    return response.data;  
+  } catch (error) {
+    console.error("Error fetching employee leaves:", error);
+    return [];  
+  }
 };
 
 export const getManagers = async () => {
@@ -12,127 +45,68 @@ export const getManagers = async () => {
   return manager.data;
 };
 
-export const getUsers = async () => {
-  const employee = await getEmployees();
-  const manager = await getManagers();
-  return [...employee, ...manager];
-};
-
-export const addUser = async (user) => {
-  await axios.post(BASE_URL + user.role, user);
-};
-
-export const checkUserExists = async (email) => {
-  const users = await getUsers();
-  return users.some(user => user.email === email);
-};
-
-export const checkCredentials = async (email, password, role) => {
-  const users = role == "employee" ? await getEmployees() : await getManagers();
-  return users.some(user => user.email === email && user.password === password);
-};
-
-export const checkGoogleCredentials = async (email, role) => {
-  const users = role == "employee" ? await getEmployees() : await getManagers();
-  return users.some(user => user.email === email);
-};
-
-export const getUserData = async (email, role) => {
-  const users = role == "employee" ? await getEmployees() : await getManagers();
-  return users.find(user => user.email === email);
-};
-
 export const updateUser = async (email, role, updatedFields) => {
-  const users = role == "employee" ? await getEmployees() : await getManagers();
-  const user = users.find(user => user.email === email);
-  if (!user) return null;
-  const response = await axios.patch(`${BASE_URL + role}/${user.id}`, updatedFields);
+  const response = await axios.patch(`${BASE_URL + role}/${email}`, updatedFields);
   return response.data;
-};
-
-export const checkManagerIdExists = async (managerId, employeeId) => {
-  const managers = await getManagers();
-  const managerdata = managers.find(manager => manager.id === managerId);
-  if (managerdata) {
-    managerdata.staff.push(employeeId);
-    await axios.patch(`${BASE_URL}manager/${managerId}`, managerdata);
-    return true;
-  }
-  return false;
-};
-
-export const getUserByEmail = async (email, role) => {
-  const users = role == "employee" ? await getEmployees() : await getManagers();
-  return users.find(user => user.email === email) || null;
-};
-
-export const getUserById = async (id, role) => {
-  const users = role == "employee" ? await getEmployees() : await getManagers();
-  return users.find(user => user.id === id) || null;
-};
-
-export const getEmployeeLeaves = async (employeeId) => {
-  try {
-    const employee = await getUserById(employeeId, "employee");
-    
-    let leaves = employee?.leaves || [];
-    
-    if (!leaves) {
-      leaves = [];
-    }
-    
-    return leaves;
-  } catch (error) {
-    console.error("Error fetching employee leaves:", error);
-    return { [new Date().getFullYear().toString()]: [] };
-  }
-};
-
-export const updateManagerStaff = async (managerId, updatedStaff) => {
-  try {
-    const response = await axios.patch(`${BASE_URL}manager/${managerId}`, { staff: updatedStaff });
-    return response.data;
-  } catch (error) {
-    throw new Error(`Error updating manager staff: ${error.message}`);
-  }
-};
-
-export const deleteEmployee = async (employeeId) => {
-  try {
-    await axios.delete(`${BASE_URL}employee/${employeeId}`);
-    return true;
-  } catch (error) {
-    throw new Error(`Error deleting employee: ${error.message}`);
-  }
 };
 
 export const deleteEmployeeFromManager = async (managerId, employeeId) => {
   try {
-    const managers = await getManagers();
-    const manager = managers.find(m => m.id === managerId);
-    
-    if (!manager) {
-      throw new Error(`Manager not found with ID: ${managerId}`);
-    }
-    
-    const updatedStaff = manager.staff.filter(id => id !== employeeId);
-    
-    await updateManagerStaff(managerId, updatedStaff);
-    
-    await deleteEmployee(employeeId);
-    
-    return true;
+    const response = await axios.delete(`${BASE_URL}manager/${managerId}/employee/${employeeId}`);
+    return response.data;
   } catch (error) {
-    throw error;
+    throw new Error(`Error deleting employee from manager: ${error.message}`);
   }
 };
 
 export const updateLoginSessions = async (id, updatedSessions) => {
   try {
-    const response = await axios.patch(`${BASE_URL}employee/${id}`, { loginSessions: updatedSessions });
+    const response = await axios.patch(`${BASE_URL}/employee/${id}/login-sessions`, {
+      loginSessions: updatedSessions,
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating login sessions:", error);
     throw error;
   }
 };
+
+export const registerUser = async(userData)=>
+{
+  const user = await axios.get(`${BASE_URL}manager/register`,userData)
+  return user.data;
+}
+
+export const checkCredentials = async (email, password, role) => {
+  const user = await axios.get(`${BASE_URL}manager/login`,{email,password,role})
+  return user.data;
+};  
+
+export const checkManagerIdExists = async (managerId, employeeId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}manager/${managerId}/add-employee/${employeeId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding employee to manager's staff:", error);
+    throw error;
+  }
+};
+
+export const getUserByEmail = async (email) => {
+  try {
+    const response = await axios.get(`${BASE_URL}employee/email/${email}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching employee by email:", error);
+    throw error;
+  }
+};
+
+
+
+
+
+
+
+
+

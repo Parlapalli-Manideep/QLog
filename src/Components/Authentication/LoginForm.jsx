@@ -7,7 +7,7 @@ import { Mail, Lock, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
-import { checkUserExists, addUser, checkGoogleCredentials, checkCredentials, getUserByEmail, getUserById } from '../../Services/Users';
+import { checkUserExists, addUser, checkCredentials, getUserByEmail, getUserById, checkEmployeeExists, checkManagerExists, getId } from '../../Services/Users';
 import { AuthLayout } from './AuthenticationLayout';
 import { toast } from 'react-toastify';
 import google from '../../assets/google.ico';
@@ -58,12 +58,15 @@ export function LoginForm() {
       await signInWithEmailAndPassword(auth, data.email, data.password);
 
       toast.success('Successfully logged in!');
-      const userid = await getUserByEmail(data.email, role);
 
-      if (role === "employee" && !userid.managerId) {
-        setEmployee(userid);
-        setShowManagerModal(true);
-        return;
+      if (role === "employee") {
+        const userid = await getUserByEmail(data.email);
+        if(!userid.managerId)
+        {
+          setEmployee(userid);
+          setShowManagerModal(true);
+          return;
+        }
       }
 
       navigate(`/${role}`, { state: { id: userid.id } });
@@ -98,24 +101,22 @@ export function LoginForm() {
         await addUser(userData);
 
         toast.success('Successfully logged in with Google!');
-        const userid = await getUserByEmail(result.user.email, userData.role);
-
         if (role === "employee" && !userid.managerId) {
           setEmployee(userid);
           setShowManagerModal(true);
           return;
         }
 
-        navigate(`/${role}`, { state: { id: userid.id } });
+        navigate(`/${role}`, { state: { id: userData.id } });
       }
       else {
-        const check = await checkGoogleCredentials(result.user.email, role)
+        const check = role == 'employee' ? await checkEmployeeExists(result.user.email) : await checkManagerExists(result.user.email)
         if (!check) {
           setUserMessage("wrong credentials")
         }
         else {
           toast.success('Successfully logged in with Google!');
-          const userid = await getUserByEmail(result.user.email, role);
+          const userid = await await getId(result.user.email,role);
 
           if (role === "employee" && !userid.managerId) {
             setEmployee(userid);

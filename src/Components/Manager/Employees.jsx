@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getUserById, updateUser } from "../../Services/Users";
 import { Table, Button, Form, Card, Pagination, Badge } from "react-bootstrap";
 import { UserCheck, UserX, Eye, ArrowLeft, Calendar } from "lucide-react";
@@ -191,7 +191,7 @@ const EmployeeManagement = () => {
                         </div>
 
                         <div className="table-responsive">
-                        <Table bordered striped hover className="text-center">
+                            <Table bordered striped hover className="text-center table-sm">
                                 <thead className="table-dark text-center">
                                     <tr>
                                         <th>EID</th>
@@ -230,14 +230,20 @@ const EmployeeManagement = () => {
                                                     <td>
                                                         <Button
                                                             variant={hasLeaveRequests ? "danger" : "secondary"}
-                                                            className="fw-bold shadow-sm"
+                                                            className="fw-bold shadow-sm position-relative"
                                                             onClick={() => openLeaveModal(emp)}
                                                             disabled={!hasLeaveRequests}
                                                         >
                                                             <Calendar size={16} className="me-1" />
                                                             {hasLeaveRequests ? (
                                                                 <>
-                                                                    Requests <Badge bg="light" text="dark" pill>{emp.leaveRequests.length}</Badge>
+                                                                    Requests
+                                                                    <Badge
+                                                                        bg="light"
+                                                                        text="dark"
+                                                                        className="position-absolute top-0 start-90 translate-middle badge rounded-pill"
+                                                                    >
+                                                                        {emp.leaveRequests.length}</Badge>
                                                                 </>
                                                             ) : "No Requests"}
                                                         </Button>

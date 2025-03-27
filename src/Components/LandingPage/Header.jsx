@@ -29,7 +29,7 @@ function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, han
                         <span className="navbar-toggler-icon"></span>
                     </button>
 
-                    <div className="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                    <div className="collapse navbar-collapse justify-content-center pb-3" id="navbarSupportedContent">
                         <ul className="navbar-nav d-flex justify-content-center align-items-center w-100">
                             <li className="nav-item">
                                 <button onClick={() => { handleFeatures(); closeNavbar(); }} className="nav-link">Features</button>

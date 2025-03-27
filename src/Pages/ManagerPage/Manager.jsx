@@ -7,7 +7,6 @@ import SideBar from "../../Components/Common/Sidebar";
 function Manager() {
     const location = useLocation();
     const managerId = location.state?.id;
-    const [managerEmail,setManagerEmail]=useState(null)
     const [manager, setManager] = useState({});
     const [activeComponent, setActiveComponent] = useState("home");
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -16,21 +15,12 @@ function Manager() {
         const fetchData = async ( ) =>
         {
             const data = await getUserById(managerId,"manager");
-            setManagerEmail(data?.email)
+            setManager(data)
         }
         fetchData()
     }
     ,[managerId]
     )
-    useEffect(() => {
-        const fetchManager = async () => {
-            const user = await getUserByEmail(managerEmail,"manager");
-            setManager(user); 
-        };
-
-        fetchManager();
-    }, [managerEmail]);
-
     return (
         <div className="d-flex">
              <div className="ms-auto" style={{ marginLeft: isSidebarExpanded ? "200px" : "70px", transition: "0.3s", width: "100%" }}>

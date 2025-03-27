@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { updateUser, getUserById, getUserData } from "../../Services/Users";
+import { updateUser, getUserById } from "../../Services/Users";
 import { MapPin, Map, Users, UserCheck, CalendarX } from "lucide-react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
@@ -8,17 +8,17 @@ import { useLocation } from "react-router-dom";
 const ManagerHome = () => {
   const [manager, setManager] = useState(null);
   const id = useLocation().state?.id;
-  
+
   const defaultLocation = { latitude: 17.3850, longitude: 78.4867, radius: "" };
-  
+
   const [location, setLocation] = useState(defaultLocation);
   const [showModal, setShowModal] = useState(false);
   const [tempLocation, setTempLocation] = useState(null);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [activeEmployees, setActiveEmployees] = useState(0);
   const [employeesOnLeave, setEmployeesOnLeave] = useState(0);
-  
-  useEffect(() => { 
+
+  useEffect(() => {
     const fetchData = async () => {
       if (id) {
         const data = await getUserById(id, "manager");
@@ -27,13 +27,13 @@ const ManagerHome = () => {
     };
     fetchData();
   }, [id]);
-  
+
   useEffect(() => {
     if (manager) {
       if (manager.location) {
         setLocation(manager.location);
       }
-      
+
       if (manager.staff && Array.isArray(manager.staff)) {
         fetchEmployeeData();
       }
@@ -42,21 +42,21 @@ const ManagerHome = () => {
 
   const fetchEmployeeData = async () => {
     if (!manager || !manager.staff) return;
-    
+
     let activeCount = 0;
     let leaveCount = 0;
-    const todayDate = new Date().toLocaleDateString("en-CA"); 
+    const todayDate = new Date().toLocaleDateString("en-CA");
 
     for (const employeeId of manager.staff) {
       const employee = await getUserById(employeeId, "employee");
-      
+
       if (employee?.loginSessions?.length > 0) {
         const lastSession = employee.loginSessions[employee.loginSessions.length - 1];
 
         if (lastSession.loginTime && !lastSession.logoutTime) {
           activeCount++;
         }
-      }      
+      }
       if (employee?.leaves?.includes(todayDate)) {
         leaveCount++;
       }
@@ -89,12 +89,12 @@ const ManagerHome = () => {
       const updatedUser = await updateUser(manager.email, "manager", updatedFields);
 
       if (updatedUser) {
-        const refreshedManagerData = await getUserData(manager.email, "manager");
-        
+        const refreshedManagerData = await getUserById(manager.id, "manager");
+
         if (refreshedManagerData?.location) {
           setLocation(refreshedManagerData.location);
         }
-        
+
         showTemporaryMessage("Location updated successfully!", "success");
       } else {
         showTemporaryMessage("Failed to update location. User not found.", "danger");
@@ -111,9 +111,9 @@ const ManagerHome = () => {
   };
 
   const openMapModal = () => {
-    setTempLocation({ 
-      latitude: location.latitude || defaultLocation.latitude, 
-      longitude: location.longitude || defaultLocation.longitude 
+    setTempLocation({
+      latitude: location.latitude || defaultLocation.latitude,
+      longitude: location.longitude || defaultLocation.longitude
     });
     setShowModal(true);
   };
@@ -182,7 +182,7 @@ const ManagerHome = () => {
       </div>
       <div className="card p-3 mb-3">
         <h5>Quick Information</h5>
-        <div className="row">
+        <div className="row g-3">
           <div className="col-md-4">
             <div className="card text-white bg-info p-3">
               <h5><Users size={20} /> Total Employees</h5>

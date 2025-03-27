@@ -49,7 +49,7 @@ const QRCodeScanner = ({onClose}) => {
             const [empLat, empLng] = location.split(",").map(Number);
 
             const managers = await getManagers();
-            const manager = managers.find(mgr => mgr.id === managerId);
+            const manager = managers.find((mgr) => mgr.id === managerId);
             if (!manager) {
                 setStatus("❌ Invalid QR Code: Manager Not Found");
                 return;
@@ -60,7 +60,7 @@ const QRCodeScanner = ({onClose}) => {
                 setStatus("❌ Invalid QR Code: Employee is Outside Manager's Location");
                 return;
             }
-
+    
             if (!manager.staff.includes(id)) {
                 setStatus("❌ Invalid QR Code: Employee is Not Under This Manager");
                 return;
@@ -71,20 +71,30 @@ const QRCodeScanner = ({onClose}) => {
                 setStatus("❌ Invalid QR Code: Employee Not Found");
                 return;
             }
-
+    
             let updatedSessions = [...employee.loginSessions];
             const lastSession = updatedSessions[updatedSessions.length - 1];
             const currentTime = new Date().toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).replace(" ", "T") + "+05:30";
-
-
+    
+            if (lastSession) {
+                const loginDate = new Date(lastSession.loginTime).toDateString();
+                const logoutDate = lastSession.logoutTime ? new Date(lastSession.logoutTime).toDateString() : null;
+                const currentDate = new Date().toDateString();
+    
+                if (loginDate === currentDate && logoutDate === currentDate) {
+                    setStatus("❌ You have been logged out for today.");
+                    return;
+                }
+            }
+    
             if (lastSession && lastSession.logoutTime === null) {
                 lastSession.logoutTime = currentTime;
             } else {
                 updatedSessions.push({ loginTime: currentTime, logoutTime: null });
             }
-
-            await updateLoginSessions(id, updatedSessions)
-
+    
+            await updateLoginSessions(id, updatedSessions);
+    
             setStatus("✅ Attendance Updated Successfully!");
         } catch (error) {
             console.error("QR Scan Error:", error);

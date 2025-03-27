@@ -7,7 +7,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../Services/firebase';
 import { PasswordStrength } from './PasswordStrength';
-import { addUser, checkUserExists, checkGoogleCredentials, getUserByEmail, getUserById } from '../../Services/Users';
+import { addUser, checkUserExists, getUserById, checkEmployeeExists, checkManagerExists, getId, registerUser } from '../../Services/Users';
 import { AuthLayout } from './AuthenticationLayout';
 import { toast } from 'react-toastify';
 import google from '../../assets/google.ico';
@@ -63,9 +63,8 @@ export function SignupForm() {
         role: role,
         method: 'email'
       };
-      role === "manager" ? (userData.staff = [], userData.location = {}) : ""
 
-      await addUser(userData);
+      await registerUser(userData);
       toast.success('Account created successfully!');
       navigate('/login', { state: { role: userData.role } });
 
@@ -83,7 +82,6 @@ export function SignupForm() {
       const result = await signInWithPopup(auth, provider);
 
       const userMessage = await checkUserExists(result.user.email);
-
       if (!userMessage) {
         const userData = {
           id: Date.now().toString(),
@@ -109,12 +107,12 @@ export function SignupForm() {
 
         navigate(`/${role}`, { state: { id: userData.id } });
       } else {
-        const check = await checkGoogleCredentials(result.user.email, role);
+        const check = role == 'employee' ? await checkEmployeeExists(result.user.email) : await checkManagerExists(result.user.email)
         if (!check) {
           setUserMessage("Wrong credentials");
         } else {
           toast.success('Successfully logged in with Google!');
-          const employee = await getUserByEmail(result.user.email, role);
+        const employee = await getId(result.user.email,role)  
 
           if (role === "employee" && !employee.managerId) {
             setEmployee(employee);

@@ -150,7 +150,6 @@ const Stats = () => {
         { name: "OT", value: otSessions }
     ].filter((item) => item.value > 0);
 
-    // Custom render for pie chart legend
     const renderColorfulLegendText = (value, entry) => {
         return <span style={{ color: entry.color, fontWeight: 500, padding: '0 8px' }}>{value}</span>;
     };
