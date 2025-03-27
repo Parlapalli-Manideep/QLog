@@ -1,7 +1,7 @@
 import React from "react";
-import howItWorks1 from "../../assets/howItWorks1.png"
-import howItWorks2 from "../../assets/howItWorks2.png";
-import howItWorks3 from "../../assets/howItWorks3.jpg";
+import howItWorks1 from "../../assets/HowItWorks1.png"
+import howItWorks2 from "../../assets/HowItWorks2.png";
+import howItWorks3 from "../../assets/HowItWorks3.jpg";
 
 function HowItWorks({ howItWorksRef }) {
   return (
