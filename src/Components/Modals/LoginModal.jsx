@@ -1,7 +1,7 @@
 import React from "react";
 import "./LoginModal.css";
-import manager from "../../Assets/manager.jpg"; 
-import employee from "../../Assets/employee.jpg";
+import manager from "../../assets/manager.jpg"; 
+import employee from "../../assets/employee.jpg";
 import { useNavigate } from "react-router-dom";
 
 function LoginModal({ show, handleClose }) {
