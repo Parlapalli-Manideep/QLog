@@ -3,7 +3,7 @@ import Header from "../../Components/LandingPage/Header";
 import Home from "../../Components/LandingPage/Home";
 import Features from "../../Components/LandingPage/Features";
 import About from "../../Components/LandingPage/About";
-import HowItWorks from "../../Components/LandingPage/HowItWorks";
+import HowItWorks from "../../Components/LandingPage/HowItWorks"
 import FaqSection from "../../Components/LandingPage/FaqSection";
 import Footer from "../../Components/LandingPage/Footer";
 

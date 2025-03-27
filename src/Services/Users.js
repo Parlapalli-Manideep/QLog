@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const BASE_URL = "http://localhost:3000/";
+export const BASE_URL = "https://qlogbackend.onrender.com/";
 
 export const checkEmployeeExists = async (email) => {
   const employee = await axios.get(`${BASE_URL}employee/exists/${email}`)
