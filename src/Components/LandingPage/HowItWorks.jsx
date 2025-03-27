@@ -1,5 +1,5 @@
 import React from "react";
-import howItWorks1 from "../../assets/HowItWorks1.png";
+import howItWorks1 from "../../assets/howItWorks1.png";
 import howItWorks2 from "../../assets/howItWorks2.png";
 import howItWorks3 from "../../assets/howItWorks3.jpg";
 
