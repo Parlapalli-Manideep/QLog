@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import loginImg from "../../assets/loginPagePicture.jpg";
+import loginImg from "../../assets/LoginPagePicture.jpg";
 
 export function AuthLayout({ children, title }) {
   return (
