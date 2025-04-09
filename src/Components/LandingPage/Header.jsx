@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Header.css";
 import LoginModal from "../Modals/LoginModal";
+import logo from "../../assets/Logo.ico";
 
 function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, handleFaqSection, handleFooter }) {
     const [showModal, setShowModal] = useState(false);
@@ -17,7 +18,7 @@ function Header({ handleHome, handleFeatures, handleAbout, handleHowItWorks, han
             <nav className="navbar navbar-expand-lg bg-body-tertiary sticky-top">
                 <div className="container-fluid bg-white d-flex">
                     <img 
-                        src="../src/Assets/Logo.ico" 
+                        src={logo}
                         alt="Bootstrap" 
                         width="30" 
                         height="30" 
